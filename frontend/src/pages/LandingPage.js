@@ -1,74 +1,209 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Zap, Users, MessageSquare, BarChart3, Sparkles, Target, ArrowRight, Check, Shield, Clock } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Zap, ArrowRight, Check, Star, Users, Sparkles, MessageSquare, BarChart3, FileText, Target, Clock, Crown, Rocket } from "lucide-react";
 
-const features = [
-  { icon: Users, title: "Lead Intelligence", desc: "AI-powered scoring identifies your hottest prospects from casual followers. Focus on leads that convert." },
-  { icon: Sparkles, title: "AI Sales Copilot", desc: "Get 3 AI-generated reply suggestions for every conversation. Casual, professional, or direct - you choose." },
-  { icon: MessageSquare, title: "Unified CRM Inbox", desc: "Manage all your DMs across Instagram, Facebook, LinkedIn in one place. Never lose a lead again." },
-  { icon: BarChart3, title: "Pipeline Analytics", desc: "Track your funnel from awareness to close. See conversion rates, response times, and top performers." },
-  { icon: Target, title: "Smart Templates", desc: "Pre-built message templates for cold outreach, follow-ups, objection handling, and closing. Personalize at scale." },
-  { icon: Shield, title: "Platform Safe", desc: "Respects rate limits and ToS. No account flags. Smart scheduling keeps your accounts secure." },
+const HERO_IMG = "https://static.prod-images.emergentagent.com/jobs/3007fe4f-ebc2-4c42-97e8-25bcb565ef33/images/819e9d66cc0feb90faa6536c8e01e5548a059e6bb8636f1a14667e09c252ffa8.png";
+
+/* ─── Feature Tabs Data ─── */
+const featureTabs = [
+  { key: "scoring", icon: Target, label: "Lead Scoring" },
+  { key: "copilot", icon: Sparkles, label: "AI Copilot" },
+  { key: "crm", icon: MessageSquare, label: "CRM Inbox" },
+  { key: "analytics", icon: BarChart3, label: "Analytics" },
+  { key: "templates", icon: FileText, label: "Templates" },
+  { key: "outreach", icon: Rocket, label: "Outreach" },
 ];
 
-const steps = [
-  { num: "01", title: "Connect your accounts", desc: "Link your social profiles in seconds. We sync your followers and DM history." },
-  { num: "02", title: "Let AI score your leads", desc: "Our AI analyzes engagement, bio, and activity to score every follower 1-100." },
-  { num: "03", title: "Close deals faster", desc: "Use AI suggestions to respond perfectly. Track everything in your pipeline." },
-];
+/* ─── Mini Mockups for Feature Tabs ─── */
+function LeadScoringMockup() {
+  const rows = [
+    { name: "Sarah Mitchell", handle: "@sarah.creates", score: 85, status: "Qualified", platform: "IG" },
+    { name: "James Wilson", handle: "@jwilson_biz", score: 92, status: "Negotiation", platform: "LI" },
+    { name: "Aisha Patel", handle: "@aisha.content", score: 88, status: "Qualified", platform: "IG" },
+    { name: "Nina Kowalski", handle: "@ninak.style", score: 90, status: "Contacted", platform: "IG" },
+    { name: "David Kim", handle: "@dkim_ventures", score: 95, status: "Closed", platform: "LI" },
+  ];
+  return (
+    <div className="space-y-1.5">
+      <div className="grid grid-cols-5 px-4 py-2 text-[10px] font-bold uppercase tracking-wider text-slate-500">
+        <span>Lead</span><span>Platform</span><span>Score</span><span>Status</span><span>Actions</span>
+      </div>
+      {rows.map((r, i) => (
+        <div key={i} className="grid grid-cols-5 items-center px-4 py-2.5 rounded-lg bg-slate-800/40 border border-slate-800/60">
+          <div><p className="text-xs font-medium text-slate-200">{r.name}</p><p className="text-[10px] text-slate-500">{r.handle}</p></div>
+          <span className="text-[10px] text-slate-400">{r.platform}</span>
+          <span className={`text-xs font-bold ${r.score >= 80 ? "text-emerald-400" : "text-amber-400"}`}>{r.score}</span>
+          <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 w-fit">{r.status}</span>
+          <span className="text-[10px] text-violet-400">Score AI</span>
+        </div>
+      ))}
+    </div>
+  );
+}
 
+function AICopilotMockup() {
+  return (
+    <div className="flex gap-3 h-full">
+      <div className="flex-1 space-y-3 p-2">
+        <div className="flex justify-start"><div className="bg-slate-800 border border-slate-700 rounded-2xl rounded-bl-sm px-4 py-2 max-w-[80%]"><p className="text-xs text-slate-200">Hey! I saw your post about growth strategies. Super interested!</p></div></div>
+        <div className="flex justify-end"><div className="bg-blue-600/20 border border-blue-500/20 rounded-2xl rounded-br-sm px-4 py-2 max-w-[80%]"><p className="text-xs text-slate-200">Thanks Sarah! I'd love to share how we can help scale your efforts.</p></div></div>
+        <div className="flex justify-start"><div className="bg-slate-800 border border-slate-700 rounded-2xl rounded-bl-sm px-4 py-2 max-w-[80%]"><p className="text-xs text-slate-200">What packages do you offer?</p></div></div>
+      </div>
+      <div className="w-52 shrink-0 space-y-2 p-2 bg-violet-500/5 rounded-lg border border-violet-500/10">
+        <div className="flex items-center gap-1.5 mb-1"><Sparkles className="w-3 h-3 text-violet-400" /><span className="text-[10px] font-bold text-violet-300 uppercase">AI Suggestions</span></div>
+        {["Casual: Hey! Let me walk you through our options...", "Professional: We offer three tiers tailored to...", "Direct: Great question! Here's our Growth plan..."].map((s, i) => (
+          <div key={i} className="p-2 rounded bg-violet-500/10 border border-violet-500/15 text-[10px] text-slate-300 leading-relaxed cursor-pointer hover:bg-violet-500/20 transition-colors">{s}</div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function CRMInboxMockup() {
+  const convos = [
+    { name: "Sarah Mitchell", msg: "What packages do you offer?", platform: "IG", unread: 2, time: "2m" },
+    { name: "James Wilson", msg: "Can you send case studies?", platform: "LI", unread: 1, time: "15m" },
+    { name: "Aisha Patel", msg: "I spend hours on DMs every day.", platform: "IG", unread: 0, time: "1h" },
+    { name: "Rachel Torres", msg: "Do you have a free trial?", platform: "IG", unread: 1, time: "3h" },
+    { name: "Olivia Hayes", msg: "Let me put together a proposal.", platform: "IG", unread: 0, time: "5h" },
+  ];
+  return (
+    <div className="space-y-1.5">
+      {convos.map((c, i) => (
+        <div key={i} className={`flex items-center gap-3 p-3 rounded-lg border transition-colors ${i === 0 ? "bg-blue-500/10 border-blue-500/20" : "bg-slate-800/40 border-slate-800/60 hover:border-slate-700"}`}>
+          <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-[10px] font-bold text-white shrink-0">{c.name.split(" ").map(n => n[0]).join("")}</div>
+          <div className="flex-1 min-w-0"><p className="text-xs font-medium text-slate-200 truncate">{c.name}</p><p className="text-[10px] text-slate-500 truncate">{c.msg}</p></div>
+          <div className="flex flex-col items-end gap-1 shrink-0">
+            <span className="text-[9px] text-slate-500">{c.time}</span>
+            {c.unread > 0 && <span className="w-4 h-4 rounded-full bg-blue-600 text-[9px] text-white flex items-center justify-center">{c.unread}</span>}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function AnalyticsMockup() {
+  const bars = [42, 65, 38, 78, 55, 90, 72, 85, 60, 45, 80, 68];
+  return (
+    <div className="space-y-4 p-2">
+      <div className="grid grid-cols-4 gap-2">
+        {[{ l: "Total Leads", v: "1,240" }, { l: "Qualified", v: "486" }, { l: "Active Chats", v: "38" }, { l: "Conversion", v: "12.5%" }].map((s, i) => (
+          <div key={i} className="p-3 rounded-lg bg-slate-800/50 border border-slate-800/60 text-center">
+            <p className="text-[10px] text-slate-500 mb-0.5">{s.l}</p><p className="text-sm font-bold text-white">{s.v}</p>
+          </div>
+        ))}
+      </div>
+      <div className="flex items-end gap-1.5 h-24 px-2">
+        {bars.map((h, i) => (<div key={i} style={{ height: `${h}%` }} className="flex-1 bg-blue-500/60 rounded-sm hover:bg-blue-400/70 transition-colors" />))}
+      </div>
+      <div className="flex justify-between px-2 text-[9px] text-slate-600">{["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"].map(m => <span key={m}>{m}</span>)}</div>
+    </div>
+  );
+}
+
+function TemplatesMockup() {
+  const templates = [
+    { name: "Cold Outreach", cat: "Opening", uses: 48 },
+    { name: "Follow-Up", cat: "Nurture", uses: 32 },
+    { name: "Objection - Price", cat: "Closing", uses: 28 },
+    { name: "Social Proof Drop", cat: "Opening", uses: 45 },
+  ];
+  return (
+    <div className="grid grid-cols-2 gap-2 p-2">
+      {templates.map((t, i) => (
+        <div key={i} className="p-3 rounded-lg bg-slate-800/40 border border-slate-800/60">
+          <p className="text-xs font-medium text-white mb-1">{t.name}</p>
+          <div className="flex items-center justify-between"><span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-700 text-slate-400">{t.cat}</span><span className="text-[10px] text-slate-500">Used {t.uses}x</span></div>
+          <p className="text-[10px] text-slate-500 mt-2 line-clamp-2">Hey {"{name}"}! I've been following your content and love what you're doing...</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function OutreachMockup() {
+  return (
+    <div className="space-y-3 p-2">
+      <div className="p-3 rounded-lg bg-slate-800/40 border border-slate-800/60">
+        <div className="flex items-center justify-between mb-2"><span className="text-xs font-medium text-white">Campaign: Growth Outreach</span><span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400">Active</span></div>
+        <div className="grid grid-cols-3 gap-2 text-center">
+          <div><p className="text-sm font-bold text-white">248</p><p className="text-[10px] text-slate-500">Sent</p></div>
+          <div><p className="text-sm font-bold text-emerald-400">67%</p><p className="text-[10px] text-slate-500">Open Rate</p></div>
+          <div><p className="text-sm font-bold text-blue-400">23%</p><p className="text-[10px] text-slate-500">Reply Rate</p></div>
+        </div>
+      </div>
+      <div className="p-3 rounded-lg bg-slate-800/40 border border-slate-800/60">
+        <p className="text-[10px] text-slate-500 mb-1">Target: Instagram creators, 10K+ followers, 3%+ engagement</p>
+        <div className="flex gap-2"><div className="w-3 h-3 rounded-full bg-emerald-500" /><div className="flex-1 h-3 bg-emerald-500/20 rounded-full overflow-hidden"><div className="h-full w-[67%] bg-emerald-500 rounded-full" /></div><span className="text-[10px] text-slate-400">67%</span></div>
+      </div>
+      <div className="p-3 rounded-lg bg-violet-500/5 border border-violet-500/10">
+        <div className="flex items-center gap-1.5 mb-1"><Sparkles className="w-3 h-3 text-violet-400" /><span className="text-[10px] font-bold text-violet-300">AI personalized each message</span></div>
+        <p className="text-[10px] text-slate-400">Messages are customized based on bio, interests, and past engagement patterns.</p>
+      </div>
+    </div>
+  );
+}
+
+const FEATURE_MOCKUPS = { scoring: LeadScoringMockup, copilot: AICopilotMockup, crm: CRMInboxMockup, analytics: AnalyticsMockup, templates: TemplatesMockup, outreach: OutreachMockup };
+const FEATURE_DESC = {
+  scoring: "AI analyzes engagement, followers, bio keywords, and activity to score every lead 1-100. Focus your energy on prospects most likely to convert.",
+  copilot: "Get 3 AI-generated reply suggestions for every conversation - casual, professional, or direct. Never struggle with what to say again.",
+  crm: "All your DMs from Instagram, Facebook, and LinkedIn in one unified inbox. Filter by unread, starred, or lead score.",
+  analytics: "Track your pipeline from awareness to close. See conversion rates, response times, and which templates perform best.",
+  templates: "Pre-built templates for cold outreach, follow-ups, objection handling, and closing. Save your best messages as reusable templates.",
+  outreach: "Define target criteria and let AI generate personalized opening messages. Batch send with smart scheduling to avoid platform flags.",
+};
+
+/* ─── Plans ─── */
 const plans = [
-  { id: "starter", name: "Starter", price: 29, features: ["500 leads", "10 AI/day", "1 account", "Basic analytics"], popular: false },
-  { id: "growth", name: "Growth", price: 79, features: ["5,000 leads", "Unlimited AI", "5 accounts", "Team of 3", "7-day free trial"], popular: true },
-  { id: "enterprise", name: "Enterprise", price: 199, features: ["Unlimited leads", "Unlimited AI", "Unlimited accounts", "Unlimited team", "API access"], popular: false },
+  { id: "starter", name: "Starter", price: 29, icon: Zap, features: ["500 leads", "10 AI/day", "1 account", "Basic analytics"], popular: false },
+  { id: "growth", name: "Growth", price: 79, icon: Rocket, features: ["5,000 leads", "Unlimited AI", "5 accounts", "Team of 3", "7-day free trial"], popular: true },
+  { id: "enterprise", name: "Enterprise", price: 199, icon: Crown, features: ["Unlimited leads", "Unlimited AI", "Unlimited accounts", "Unlimited team", "API access"], popular: false },
 ];
 
+/* ─── Main Component ─── */
 export default function LandingPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [activeFeature, setActiveFeature] = useState("scoring");
+  const ActiveMockup = FEATURE_MOCKUPS[activeFeature];
 
-  const handleGetStarted = () => {
-    if (user) { navigate("/dashboard"); return; }
-    navigate("/login");
-  };
-
-  // REMINDER: DO NOT HARDCODE THE URL, OR ADD ANY FALLBACKS OR REDIRECT URLS, THIS BREAKS THE AUTH
+  const handleGetStarted = () => navigate(user ? "/dashboard" : "/login");
   const handleGoogleSignIn = () => {
     const redirectUrl = window.location.origin + '/dashboard';
     window.location.href = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(redirectUrl)}`;
   };
 
   return (
-    <div className="min-h-screen bg-[#020617]">
-      {/* Navbar */}
-      <nav className="fixed top-0 left-0 right-0 z-50 glass-surface" data-testid="landing-navbar">
+    <div className="min-h-screen bg-white text-slate-900" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+      {/* ━━━ Navbar ━━━ */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-100" data-testid="landing-navbar">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center">
-              <Zap className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-lg font-bold text-white tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>GoSocial</span>
+            <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center"><Zap className="w-4 h-4 text-white" /></div>
+            <span className="text-lg font-bold text-slate-900 tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>GoSocial</span>
           </div>
           <div className="hidden md:flex items-center gap-8">
-            <a href="#features" className="text-sm text-slate-400 hover:text-white transition-colors">Features</a>
-            <a href="#how-it-works" className="text-sm text-slate-400 hover:text-white transition-colors">How it Works</a>
-            <a href="#pricing" className="text-sm text-slate-400 hover:text-white transition-colors">Pricing</a>
+            <a href="#features" className="text-sm text-slate-500 hover:text-slate-900 transition-colors font-medium">Features</a>
+            <a href="#pricing" className="text-sm text-slate-500 hover:text-slate-900 transition-colors font-medium">Pricing</a>
           </div>
           <div className="flex items-center gap-3">
             {user ? (
-              <Button onClick={() => navigate("/dashboard")} data-testid="nav-dashboard-btn"
-                className="bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm h-9 px-4">
+              <Button onClick={() => navigate("/dashboard")} data-testid="nav-dashboard-btn" className="bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm h-9 px-5 rounded-full">
                 Dashboard <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
               </Button>
             ) : (
               <>
-                <Button variant="ghost" onClick={() => navigate("/login")} data-testid="nav-login-btn"
-                  className="text-slate-400 hover:text-white text-sm h-9">Sign In</Button>
+                <Button variant="ghost" onClick={() => navigate("/login")} data-testid="nav-login-btn" className="text-slate-600 hover:text-slate-900 text-sm h-9 font-medium">Log in</Button>
                 <Button onClick={handleGetStarted} data-testid="nav-get-started-btn"
-                  className="bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm h-9 px-4">
-                  Start Free Trial
+                  className="text-white font-bold text-sm h-10 px-6 rounded-full shadow-lg"
+                  style={{ background: "linear-gradient(135deg, #7c3aed, #3b82f6)" }}>
+                  <ArrowRight className="w-4 h-4 mr-2" /> Start for free
                 </Button>
               </>
             )}
@@ -76,160 +211,192 @@ export default function LandingPage() {
         </div>
       </nav>
 
-      {/* Hero */}
-      <section className="pt-32 pb-20 px-6">
-        <div className="max-w-5xl mx-auto text-center animate-fade-in">
-          <Badge className="mb-6 bg-blue-600/10 text-blue-400 border-blue-500/20 text-xs px-4 py-1.5">
-            <Clock className="w-3 h-3 mr-1.5" /> 7-day free trial on Growth plan
-          </Badge>
-          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-white tracking-tight leading-tight mb-6"
-            style={{ fontFamily: 'Outfit, sans-serif' }}>
-            Turn Followers Into
-            <span className="text-blue-400"> Paying Customers</span>
+      {/* ━━━ Hero ━━━ */}
+      <section className="pt-28 pb-8 px-6">
+        <div className="max-w-4xl mx-auto text-center animate-fade-in">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 leading-tight mb-6" style={{ fontFamily: 'Outfit, sans-serif' }}>
+            Grow your revenue with{" "}
+            <span className="inline-flex items-center"><Sparkles className="w-8 h-8 sm:w-10 sm:h-10 text-violet-500 mr-1" /><span className="bg-gradient-to-r from-violet-600 to-blue-500 bg-clip-text text-transparent">AI-Powered</span></span>
+            {" "}social selling platform.
           </h1>
-          <p className="text-lg text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed">
-            AI-powered sales assistant for creators. Score leads, get reply suggestions, and manage your entire sales pipeline from social DMs.
+          <p className="text-base md:text-lg text-slate-500 max-w-2xl mx-auto mb-10 leading-relaxed">
+            Score leads, automate DM responses, and close deals faster - all from one platform built for creators who sell on social.
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-4">
             <Button onClick={handleGetStarted} data-testid="hero-cta-btn"
-              className="bg-blue-600 hover:bg-blue-500 text-white font-bold text-base h-12 px-8 shadow-[0_0_30px_rgba(59,130,246,0.3)] hover:-translate-y-0.5 transition-all">
-              Start Free Trial <ArrowRight className="w-4 h-4 ml-2" />
+              className="text-white font-bold text-base h-14 px-10 rounded-full shadow-xl hover:-translate-y-0.5 transition-all"
+              style={{ background: "linear-gradient(135deg, #7c3aed, #3b82f6)" }}>
+              <ArrowRight className="w-5 h-5 mr-2" /> Start for free
             </Button>
-            <Button variant="outline" onClick={handleGoogleSignIn} data-testid="hero-google-btn"
-              className="bg-slate-900/50 border-slate-700 text-slate-300 hover:bg-slate-800 font-medium text-base h-12 px-8">
+          </div>
+          <p className="text-sm text-slate-400 mb-8">7 days free trial. No Credit Card Required.</p>
+
+          {/* Star Rating */}
+          <div className="flex items-center justify-center gap-1.5 mb-12">
+            {[1,2,3,4,5].map(i => <Star key={i} className={`w-4 h-4 ${i <= 4 ? "text-amber-400 fill-amber-400" : "text-amber-300 fill-amber-300"}`} />)}
+            <span className="text-sm font-bold text-slate-700 ml-1">4.8</span>
+            <span className="text-xs text-slate-400 ml-1">from 200+ creators</span>
+          </div>
+        </div>
+      </section>
+
+      {/* ━━━ Product Screenshot ━━━ */}
+      <section className="px-6 pb-16">
+        <div className="max-w-5xl mx-auto">
+          <div className="rounded-2xl border border-slate-200 bg-white shadow-2xl shadow-slate-200/50 overflow-hidden">
+            {/* Browser chrome */}
+            <div className="flex items-center gap-2 px-4 py-3 bg-slate-50 border-b border-slate-200">
+              <div className="flex gap-1.5"><div className="w-3 h-3 rounded-full bg-red-400" /><div className="w-3 h-3 rounded-full bg-amber-400" /><div className="w-3 h-3 rounded-full bg-emerald-400" /></div>
+              <div className="flex-1 mx-4"><div className="h-6 bg-slate-100 rounded-md flex items-center px-3"><span className="text-[10px] text-slate-400">app.gosocial.io/dashboard</span></div></div>
+            </div>
+            <img src={HERO_IMG} alt="GoSocial Dashboard" className="w-full" data-testid="hero-product-image" />
+          </div>
+        </div>
+      </section>
+
+      {/* ━━━ Trust Bar ━━━ */}
+      <section className="py-10 px-6 border-y border-slate-100">
+        <div className="max-w-5xl mx-auto">
+          <p className="text-center text-xs text-slate-400 uppercase tracking-widest font-bold mb-6">Trusted by creators selling on</p>
+          <div className="flex items-center justify-center gap-10 md:gap-16 flex-wrap opacity-40">
+            {["Instagram", "Facebook", "LinkedIn", "Twitter/X", "TikTok"].map(p => (
+              <span key={p} className="text-lg font-bold text-slate-900" style={{ fontFamily: 'Outfit, sans-serif' }}>{p}</span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ━━━ Dark Cosmic Section - Animated Text ━━━ */}
+      <section className="py-24 px-6 relative overflow-hidden" style={{ background: "radial-gradient(ellipse at 50% 0%, rgba(139,92,246,0.12) 0%, transparent 60%), radial-gradient(ellipse at 80% 80%, rgba(59,130,246,0.08) 0%, transparent 50%), #020617" }}>
+        {/* Light streaks */}
+        <div className="absolute inset-0 pointer-events-none" style={{ background: "linear-gradient(135deg, rgba(255,255,255,0.03) 0%, transparent 40%)" }} />
+        <div className="absolute top-0 right-0 w-96 h-96 rounded-full opacity-10" style={{ background: "radial-gradient(circle, rgba(139,92,246,0.5), transparent 70%)" }} />
+
+        <div className="max-w-4xl mx-auto text-center relative z-10">
+          <p className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-300 leading-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>
+            Score leads with{" "}<span className="text-blue-400">AI Lead Scoring</span>,<br />
+            close deals with{" "}<span className="text-violet-400">AI Sales Copilot</span>,<br />
+            and manage everything in your{" "}<span className="text-emerald-400">Social CRM</span>.
+          </p>
+        </div>
+      </section>
+
+      {/* ━━━ Features Section ━━━ */}
+      <section id="features" className="py-20 px-6 relative" style={{ background: "linear-gradient(180deg, #020617 0%, #0a0f1f 100%)" }}>
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <Badge className="bg-slate-800 text-slate-300 border-slate-700 text-xs px-4 py-1 mb-4 uppercase tracking-widest font-bold">Features</Badge>
+            <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>
+              Everything you need in one place
+            </h2>
+            <p className="text-base text-slate-400 mt-3 max-w-xl mx-auto">
+              GoSocial combines lead intelligence, AI conversations, and pipeline management into one creator-focused platform.
+            </p>
+          </div>
+
+          {/* Feature Pill Tabs */}
+          <div className="flex items-center justify-center gap-2 mb-8 flex-wrap" data-testid="feature-tabs">
+            {featureTabs.map(tab => (
+              <button key={tab.key} onClick={() => setActiveFeature(tab.key)} data-testid={`feature-tab-${tab.key}`}
+                className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all ${
+                  activeFeature === tab.key
+                    ? "text-white shadow-lg"
+                    : "bg-slate-800/80 text-slate-400 border border-slate-700 hover:text-white hover:border-slate-600"
+                }`}
+                style={activeFeature === tab.key ? { background: "linear-gradient(135deg, #7c3aed, #3b82f6)" } : {}}>
+                <tab.icon className="w-4 h-4" /> {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Feature Description */}
+          <p className="text-center text-sm text-slate-400 max-w-2xl mx-auto mb-8">{FEATURE_DESC[activeFeature]}</p>
+
+          {/* Feature Mockup in Browser Frame */}
+          <div className="max-w-4xl mx-auto">
+            <div className="rounded-2xl border border-slate-700/50 bg-slate-900/50 overflow-hidden shadow-2xl shadow-black/30">
+              <div className="flex items-center gap-2 px-4 py-3 bg-slate-800/80 border-b border-slate-700/50">
+                <div className="flex gap-1.5"><div className="w-2.5 h-2.5 rounded-full bg-slate-600" /><div className="w-2.5 h-2.5 rounded-full bg-slate-600" /><div className="w-2.5 h-2.5 rounded-full bg-slate-600" /></div>
+                <div className="flex-1 mx-4"><div className="h-5 bg-slate-700/50 rounded flex items-center px-3"><span className="text-[9px] text-slate-500">app.gosocial.io/{activeFeature === "scoring" ? "leads" : activeFeature === "copilot" ? "crm" : activeFeature}</span></div></div>
+              </div>
+              <div className="p-4 min-h-[320px]" data-testid="feature-mockup-content">
+                <ActiveMockup />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ━━━ Pricing ━━━ */}
+      <section id="pricing" className="py-20 px-6 bg-white">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>Simple, transparent pricing</h2>
+            <p className="text-base text-slate-500 mt-3">Start with a 7-day free trial. No credit card required.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {plans.map(plan => (
+              <Card key={plan.id} data-testid={`landing-plan-${plan.id}`}
+                className={`relative transition-all hover:-translate-y-1 ${plan.popular
+                  ? "border-2 border-blue-500 shadow-xl shadow-blue-500/10 bg-white"
+                  : "border border-slate-200 bg-white"}`}>
+                {plan.popular && <div className="absolute -top-3 left-1/2 -translate-x-1/2"><Badge className="text-white text-[10px] px-3 py-0.5" style={{ background: "linear-gradient(135deg, #7c3aed, #3b82f6)" }}>Most Popular</Badge></div>}
+                <CardContent className="p-6 pt-7">
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${plan.popular ? "bg-blue-600" : "bg-slate-100"}`}>
+                      <plan.icon className={`w-4 h-4 ${plan.popular ? "text-white" : "text-slate-600"}`} />
+                    </div>
+                    <span className="text-base font-bold text-slate-900">{plan.name}</span>
+                  </div>
+                  <div className="flex items-baseline gap-1 mb-5">
+                    <span className="text-4xl font-extrabold text-slate-900" style={{ fontFamily: 'Outfit, sans-serif' }}>${plan.price}</span>
+                    <span className="text-sm text-slate-400">/mo</span>
+                  </div>
+                  <ul className="space-y-2.5 mb-6">
+                    {plan.features.map((f, i) => (
+                      <li key={i} className="flex items-center gap-2 text-sm text-slate-600"><Check className={`w-4 h-4 shrink-0 ${plan.popular ? "text-blue-500" : "text-emerald-500"}`} />{f}</li>
+                    ))}
+                  </ul>
+                  <Button onClick={handleGetStarted} data-testid={`landing-subscribe-${plan.id}`}
+                    className={`w-full h-11 font-bold rounded-full ${plan.popular
+                      ? "text-white shadow-lg"
+                      : "bg-slate-100 hover:bg-slate-200 text-slate-900 border border-slate-200"}`}
+                    style={plan.popular ? { background: "linear-gradient(135deg, #7c3aed, #3b82f6)" } : {}}>
+                    {plan.popular ? "Start Free Trial" : "Get Started"}
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ━━━ Final CTA ━━━ */}
+      <section className="py-20 px-6 relative overflow-hidden" style={{ background: "radial-gradient(ellipse at 50% 80%, rgba(59,130,246,0.08) 0%, transparent 60%), #020617" }}>
+        <div className="max-w-3xl mx-auto text-center relative z-10">
+          <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-4" style={{ fontFamily: 'Outfit, sans-serif' }}>Get started today!</h2>
+          <p className="text-base text-slate-400 mb-10">Join creators already converting followers into customers with AI.</p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Button onClick={handleGetStarted} data-testid="final-cta-btn"
+              className="text-white font-bold text-base h-14 px-10 rounded-full shadow-xl hover:-translate-y-0.5 transition-all"
+              style={{ background: "linear-gradient(135deg, #7c3aed, #3b82f6)" }}>
+              <ArrowRight className="w-5 h-5 mr-2" /> Start for free
+            </Button>
+            <Button variant="outline" onClick={handleGoogleSignIn} data-testid="final-google-btn"
+              className="bg-transparent border-slate-700 text-slate-300 hover:bg-slate-800 font-medium h-14 px-8 rounded-full">
               <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
               Sign in with Google
             </Button>
           </div>
+          <p className="text-xs text-slate-500 mt-6">7 days free trial. No Credit Card Required.</p>
         </div>
       </section>
 
-      {/* Stats */}
-      <section className="py-12 px-6 border-y border-slate-800/50">
-        <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-          {[
-            { value: "10K+", label: "Creators" },
-            { value: "250K+", label: "Leads Scored" },
-            { value: "40%", label: "Avg Conversion" },
-            { value: "3x", label: "Faster Response" },
-          ].map((s, i) => (
-            <div key={i} data-testid={`stat-${i}`}>
-              <p className="text-3xl font-extrabold text-white" style={{ fontFamily: 'Outfit, sans-serif' }}>{s.value}</p>
-              <p className="text-xs text-slate-500 uppercase tracking-widest mt-1 font-bold">{s.label}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Features */}
-      <section id="features" className="py-20 px-6">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-14">
-            <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>
-              Everything you need to sell on social
-            </h2>
-            <p className="text-base text-slate-400 mt-3 max-w-xl mx-auto">Built for creators who sell through DMs. Not another enterprise CRM.</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 stagger-children">
-            {features.map((f, i) => (
-              <div key={i} data-testid={`feature-card-${i}`}
-                className="p-6 rounded-xl border border-slate-800 bg-slate-900/30 hover:border-blue-500/30 hover:bg-slate-900/60 transition-all group">
-                <div className="w-10 h-10 rounded-lg bg-blue-600/10 flex items-center justify-center mb-4 group-hover:bg-blue-600/20 transition-colors">
-                  <f.icon className="w-5 h-5 text-blue-400" />
-                </div>
-                <h3 className="text-base font-semibold text-white mb-2">{f.title}</h3>
-                <p className="text-sm text-slate-400 leading-relaxed">{f.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* How it Works */}
-      <section id="how-it-works" className="py-20 px-6 bg-slate-900/30">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-14">
-            <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>
-              Up and running in minutes
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {steps.map((s, i) => (
-              <div key={i} data-testid={`step-${i}`} className="text-center md:text-left">
-                <span className="text-5xl font-extrabold text-blue-600/20" style={{ fontFamily: 'Outfit, sans-serif' }}>{s.num}</span>
-                <h3 className="text-lg font-semibold text-white mt-2 mb-2">{s.title}</h3>
-                <p className="text-sm text-slate-400 leading-relaxed">{s.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Pricing */}
-      <section id="pricing" className="py-20 px-6">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-14">
-            <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>
-              Simple, transparent pricing
-            </h2>
-            <p className="text-base text-slate-400 mt-3">Start with a 7-day free trial. No credit card required.</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {plans.map((plan) => (
-              <div key={plan.id} data-testid={`landing-plan-${plan.id}`}
-                className={`relative p-6 rounded-xl border transition-all hover:-translate-y-1 ${
-                  plan.popular ? "border-blue-500/50 shadow-[0_0_30px_rgba(59,130,246,0.15)] bg-slate-900/50" : "border-slate-800 bg-slate-900/30"
-                }`}>
-                {plan.popular && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <Badge className="bg-blue-600 text-white text-[10px] px-3 py-0.5">Most Popular</Badge>
-                  </div>
-                )}
-                <h3 className="text-lg font-bold text-white mb-1">{plan.name}</h3>
-                <div className="flex items-baseline gap-1 mb-5">
-                  <span className="text-4xl font-extrabold text-white" style={{ fontFamily: 'Outfit, sans-serif' }}>${plan.price}</span>
-                  <span className="text-sm text-slate-500">/mo</span>
-                </div>
-                <ul className="space-y-2.5 mb-6">
-                  {plan.features.map((f, i) => (
-                    <li key={i} className="flex items-center gap-2 text-sm text-slate-300">
-                      <Check className={`w-4 h-4 shrink-0 ${plan.popular ? "text-blue-400" : "text-emerald-400"}`} /> {f}
-                    </li>
-                  ))}
-                </ul>
-                <Button onClick={handleGetStarted} data-testid={`landing-subscribe-${plan.id}`}
-                  className={`w-full h-10 font-bold ${
-                    plan.popular ? "bg-blue-600 hover:bg-blue-500 text-white" : "bg-slate-800 hover:bg-slate-700 text-white border border-slate-700"
-                  }`}>
-                  {plan.popular ? "Start Free Trial" : "Get Started"}
-                </Button>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Final CTA */}
-      <section className="py-20 px-6">
-        <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight mb-4" style={{ fontFamily: 'Outfit, sans-serif' }}>
-            Ready to grow your revenue?
-          </h2>
-          <p className="text-base text-slate-400 mb-8">Join thousands of creators already converting followers into customers.</p>
-          <Button onClick={handleGetStarted} data-testid="final-cta-btn"
-            className="bg-blue-600 hover:bg-blue-500 text-white font-bold text-base h-12 px-8 shadow-[0_0_30px_rgba(59,130,246,0.3)]">
-            Start Your 7-Day Free Trial <ArrowRight className="w-4 h-4 ml-2" />
-          </Button>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="border-t border-slate-800/50 py-10 px-6">
+      {/* ━━━ Footer ━━━ */}
+      <footer className="py-8 px-6 bg-[#020617] border-t border-slate-800/50">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-md bg-blue-600 flex items-center justify-center">
-              <Zap className="w-4 h-4 text-white" />
-            </div>
+            <div className="w-6 h-6 rounded-md bg-blue-600 flex items-center justify-center"><Zap className="w-3 h-3 text-white" /></div>
             <span className="text-sm font-bold text-white">GoSocial</span>
           </div>
           <p className="text-xs text-slate-600">AI-powered social selling platform for creators</p>

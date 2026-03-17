@@ -4,7 +4,7 @@ import json
 from datetime import datetime
 
 class GoSocialAPITester:
-    def __init__(self, base_url="https://lead-ai-1.preview.emergentagent.com"):
+    def __init__(self, base_url="https://social-sales-hub-9.preview.emergentagent.com"):
         self.base_url = base_url
         self.token = None
         self.user_id = None
@@ -634,7 +634,7 @@ class GoSocialAPITester:
         print("\n🔍 Testing create checkout with valid plan...")
         checkout_data = {
             "plan_id": "growth", 
-            "origin_url": "https://lead-ai-1.preview.emergentagent.com"
+            "origin_url": "https://social-sales-hub-9.preview.emergentagent.com"
         }
         success, response = self.run_test(
             "Create Checkout - Valid Plan",
@@ -658,7 +658,7 @@ class GoSocialAPITester:
         print("\n🔍 Testing create checkout with invalid plan...")
         invalid_checkout_data = {
             "plan_id": "invalid_plan",
-            "origin_url": "https://lead-ai-1.preview.emergentagent.com"
+            "origin_url": "https://social-sales-hub-9.preview.emergentagent.com"
         }
         success, response = self.run_test(
             "Create Checkout - Invalid Plan",
@@ -728,7 +728,7 @@ class GoSocialAPITester:
 def main():
     """Run all API tests"""
     print("🚀 Starting GoSocial API Tests")
-    print("Backend URL: https://lead-ai-1.preview.emergentagent.com")
+    print("Backend URL: https://social-sales-hub-9.preview.emergentagent.com")
     print("Test User: test@gosocial.com")
     
     tester = GoSocialAPITester()
