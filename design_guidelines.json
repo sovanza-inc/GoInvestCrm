@@ -1,0 +1,175 @@
+{
+  "project_name": "GoSocial",
+  "design_philosophy": {
+    "identity": "E1: The Anti-AI Designer",
+    "core_principles": [
+      "Fusion over Imitation: Mix SaaS precision with Creator Economy vibrancy",
+      "Emotion First: Every interaction must feel 'fast' and 'empowering'",
+      "Content is King: Data is the hero, UI is the stage",
+      "Negative Space: 2x standard spacing for luxury feel"
+    ],
+    "anti_patterns": [
+      "No 'Inter' for Headings",
+      "No Center-Everything layouts",
+      "No Default SaaS Blue/Purple gradients",
+      "No 100% filled grids - leave breathing room"
+    ]
+  },
+  "typography": {
+    "font_family": {
+      "headings": "Outfit, sans-serif",
+      "body": "Plus Jakarta Sans, sans-serif",
+      "mono": "JetBrains Mono, monospace"
+    },
+    "installation": "import '@fontsource/outfit'; import '@fontsource/plus-jakarta-sans';",
+    "rules": {
+      "headings": "font-bold tracking-tight text-white",
+      "h1": "text-5xl md:text-6xl font-extrabold leading-tight",
+      "h2": "text-3xl md:text-4xl font-bold",
+      "h3": "text-2xl font-semibold",
+      "body": "text-slate-300 leading-relaxed font-medium",
+      "caption": "text-xs uppercase tracking-widest text-slate-500 font-bold"
+    }
+  },
+  "colors": {
+    "theme": "dark",
+    "palette": {
+      "background": {
+        "default": "#020617",
+        "paper": "#0f172a",
+        "subtle": "#1e293b"
+      },
+      "primary": {
+        "main": "#3b82f6",
+        "hover": "#2563eb",
+        "foreground": "#ffffff"
+      },
+      "secondary": {
+        "main": "#6366f1",
+        "foreground": "#ffffff"
+      },
+      "accent": {
+        "success": "#10b981",
+        "warning": "#f59e0b",
+        "error": "#ef4444",
+        "ai_glow": "#8b5cf6"
+      },
+      "text": {
+        "primary": "#f8fafc",
+        "secondary": "#94a3b8",
+        "muted": "#64748b"
+      },
+      "border": {
+        "default": "rgba(255, 255, 255, 0.08)",
+        "active": "rgba(59, 130, 246, 0.5)"
+      }
+    },
+    "tailwind_config_extension": {
+      "colors": {
+        "background": "hsl(222, 47%, 11%)",
+        "foreground": "hsl(210, 40%, 98%)",
+        "card": "hsl(222, 47%, 11%)",
+        "card-foreground": "hsl(210, 40%, 98%)",
+        "popover": "hsl(222, 47%, 11%)",
+        "popover-foreground": "hsl(210, 40%, 98%)",
+        "primary": "hsl(217, 91%, 60%)",
+        "primary-foreground": "hsl(222, 47.4%, 11.2%)",
+        "secondary": "hsl(217.2, 32.6%, 17.5%)",
+        "secondary-foreground": "hsl(210, 40%, 98%)",
+        "muted": "hsl(217.2, 32.6%, 17.5%)",
+        "muted-foreground": "hsl(215, 20.2%, 65.1%)",
+        "accent": "hsl(217.2, 32.6%, 17.5%)",
+        "accent-foreground": "hsl(210, 40%, 98%)",
+        "destructive": "hsl(0, 62.8%, 30.6%)",
+        "destructive-foreground": "hsl(210, 40%, 98%)",
+        "border": "hsl(217.2, 32.6%, 17.5%)",
+        "input": "hsl(217.2, 32.6%, 17.5%)",
+        "ring": "hsl(224.3, 76.3%, 48%)"
+      }
+    }
+  },
+  "visual_enhancers": {
+    "surfaces": {
+      "glass": "bg-slate-950/70 backdrop-blur-xl border border-white/10",
+      "card_default": "bg-slate-900 border border-slate-800",
+      "card_hover": "hover:border-blue-500/30 hover:bg-slate-800/80 transition-all duration-300",
+      "active_state": "ring-1 ring-blue-500/50 bg-blue-500/10"
+    },
+    "effects": {
+      "tracing_beam": "Use framer-motion to animate border colors on active cards",
+      "neon_glow": "box-shadow: 0 0 20px -5px rgba(59, 130, 246, 0.3)",
+      "noise_overlay": "opacity-5 mix-blend-overlay pointer-events-none fixed inset-0 z-50 bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"
+    }
+  },
+  "layout_strategies": {
+    "dashboard_grid": "Bento Grid Mode B (High Density): grid-cols-1 md:grid-cols-4 gap-4",
+    "marketing_grid": "Tetris Grid Mode A: grid-cols-1 md:grid-cols-12 gap-8",
+    "spacing": {
+      "container_padding": "p-6 md:p-8",
+      "section_gap": "gap-8"
+    }
+  },
+  "components": {
+    "buttons": {
+      "primary": "bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-6 rounded-lg shadow-[0_0_15px_rgba(37,99,235,0.3)] transition-all transform hover:-translate-y-0.5",
+      "secondary": "bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 font-medium py-3 px-6 rounded-lg",
+      "ghost": "text-slate-400 hover:text-white hover:bg-white/5"
+    },
+    "inputs": {
+      "default": "bg-slate-950/50 border-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 rounded-md h-12 text-slate-200 placeholder:text-slate-600"
+    },
+    "cards": {
+      "stat_card": "flex flex-col p-6 rounded-xl border border-slate-800 bg-slate-900/50 hover:bg-slate-900 transition-colors",
+      "pipeline_column": "bg-slate-900/30 border border-slate-800/50 rounded-xl p-4 min-h-[500px]"
+    },
+    "ai_sidebar": {
+      "container": "w-80 border-l border-slate-800 bg-slate-950/90 backdrop-blur-sm fixed right-0 h-full p-6",
+      "suggestion_card": "p-4 rounded-lg bg-indigo-500/10 border border-indigo-500/20 hover:border-indigo-500/50 cursor-pointer transition-all"
+    }
+  },
+  "assets": {
+    "icons": {
+      "library": "lucide-react",
+      "style": "stroke-1.5"
+    },
+    "images": {
+      "hero_background": {
+        "url": "https://images.unsplash.com/photo-1760978632114-0939f0d60045?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NjZ8MHwxfHNlYXJjaHwzfHxhYnN0cmFjdCUyMGRhcmslMjB0ZWNobm9sb2d5JTIwbWVzaCUyMGJhY2tncm91bmR8ZW58MHx8fHwxNzczNzg0Njc1fDA&ixlib=rb-4.1.0&q=85",
+        "alt": "Abstract Dark Mesh Wave"
+      },
+      "leads": [
+        {
+          "url": "https://images.unsplash.com/photo-1589220286904-3dcef62c68ee?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjY2NzV8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjBoZWFkc2hvdCUyMHBvcnRyYWl0JTIwZGl2ZXJzZXxlbnwwfHx8fDE3NzM2Njc3MTN8MA&ixlib=rb-4.1.0&q=85",
+          "alt": "Lead Sarah"
+        },
+        {
+          "url": "https://images.unsplash.com/photo-1575299833801-85ce40813bac?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjY2NzV8MHwxfHNlYXJjaHwzfHxwcm9mZXNzaW9uYWwlMjBoZWFkc2hvdCUyMHBvcnRyYWl0JTIwZGl2ZXJzZXxlbnwwfHx8fDE3NzM2Njc3MTN8MA&ixlib=rb-4.1.0&q=85",
+          "alt": "Lead Michael"
+        },
+        {
+          "url": "https://images.unsplash.com/photo-1657771072153-878f8b0ce74a?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjY2NzV8MHwxfHNlYXJjaHw0fHxwcm9mZXNzaW9uYWwlMjBoZWFkc2hvdCUyMHBvcnRyYWl0JTIwZGl2ZXJzZXxlbnwwfHx8fDE3NzM2Njc3MTN8MA&ixlib=rb-4.1.0&q=85",
+          "alt": "Lead David"
+        }
+      ]
+    }
+  },
+  "implementation_steps": [
+    "1. Setup Theme: Configure tailwind.config.js with the deep dark palette (hsl values).",
+    "2. Global CSS: Add @fontsource imports and setup base styles in index.css (remove default react css).",
+    "3. Layout Shell: Create a Sidebar Layout (Shadcn Sidebar or Custom) + Top Header.",
+    "4. Dashboard: Implement Bento Grid with Recharts (Line/Bar charts) + Stat Cards.",
+    "5. CRM Page: Split view (List Left, Thread Right) with 'High Density' spacing.",
+    "6. AI Features: Add 'Sparkle' icon and 'Tracing Beam' effect for AI suggestions."
+  ],
+  "universal_guidelines": [
+    "Use 'sonner' for toasts.",
+    "Use 'recharts' for all analytics charts.",
+    "Never use 'alert' or 'confirm' - use Shadcn Dialog.",
+    "Ensure all interactive elements have data-testid attributes.",
+    "Do not use gradients for backgrounds, use solid dark colors + subtle borders.",
+    "JS Only: Since the environment is JS, rename any .tsx reference to .jsx or .js in your mind.",
+    "Use Lucide React for icons.",
+    "For tables (Leads), use Shadcn Table with 'dense' row styling.",
+    "Add 'dark' class to html/body by default."
+  ]
+}
