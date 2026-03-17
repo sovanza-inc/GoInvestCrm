@@ -10,6 +10,7 @@ import CRMPage from "@/pages/CRMPage";
 import AnalyticsPage from "@/pages/AnalyticsPage";
 import TemplatesPage from "@/pages/TemplatesPage";
 import SettingsPage from "@/pages/SettingsPage";
+import PricingPage from "@/pages/PricingPage";
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -31,6 +32,8 @@ function AppRoutes() {
         <Route path="crm" element={<CRMPage />} />
         <Route path="analytics" element={<AnalyticsPage />} />
         <Route path="templates" element={<TemplatesPage />} />
+        <Route path="pricing" element={<PricingPage />} />
+        <Route path="billing/success" element={<PricingPage />} />
         <Route path="settings" element={<SettingsPage />} />
       </Route>
     </Routes>

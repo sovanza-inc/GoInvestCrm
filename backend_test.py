@@ -17,6 +17,10 @@ class GoSocialAPITester:
         self.test_user_password = "test123"
         self.test_user_name = "Test User"
         
+        # Billing test data
+        self.expected_plans = ['starter', 'growth', 'enterprise']
+        self.expected_prices = {'starter': 29.00, 'growth': 79.00, 'enterprise': 199.00}
+        
     def run_test(self, name, method, endpoint, expected_status, data=None, params=None):
         """Run a single API test"""
         url = f"{self.base_url}/api/{endpoint}"
@@ -499,6 +503,133 @@ class GoSocialAPITester:
         if success:
             print(f"   ⚙️ Updated settings successfully")
 
+    def test_billing_endpoints(self):
+        """Test billing-related endpoints"""
+        print("\n" + "="*40)
+        print("TESTING BILLING ENDPOINTS")
+        print("="*40)
+        
+        # Test GET /api/billing/plans
+        print("\n🔍 Testing billing plans endpoint...")
+        success, response = self.run_test(
+            "Get Billing Plans",
+            "GET", 
+            "billing/plans",
+            200
+        )
+        
+        if success:
+            plans = response.get('plans', [])
+            print(f"   📋 Found {len(plans)} plans")
+            
+            # Verify all expected plans exist with correct pricing
+            plan_ids = [p.get('id') for p in plans]
+            for expected_plan in self.expected_plans:
+                if expected_plan not in plan_ids:
+                    print(f"   ❌ Missing plan: {expected_plan}")
+                    self.failed_tests.append(f"Missing {expected_plan} plan")
+                else:
+                    plan = next(p for p in plans if p.get('id') == expected_plan)
+                    expected_price = self.expected_prices[expected_plan]
+                    actual_price = plan.get('price')
+                    if actual_price != expected_price:
+                        print(f"   ❌ Wrong price for {expected_plan}: expected {expected_price}, got {actual_price}")
+                        self.failed_tests.append(f"Wrong price for {expected_plan}")
+                    else:
+                        print(f"   ✅ {expected_plan} plan: ${actual_price}")
+        
+        # Test GET /api/billing/subscription  
+        print("\n🔍 Testing subscription status endpoint...")
+        success, response = self.run_test(
+            "Get User Subscription",
+            "GET",
+            "billing/subscription", 
+            200
+        )
+        
+        if success:
+            plan = response.get('plan', 'unknown')
+            status = response.get('status', 'unknown')
+            print(f"   📊 Current plan: {plan}, Status: {status}")
+        
+        # Test POST /api/billing/create-checkout with valid plan
+        print("\n🔍 Testing create checkout with valid plan...")
+        checkout_data = {
+            "plan_id": "growth", 
+            "origin_url": "https://lead-ai-1.preview.emergentagent.com"
+        }
+        success, response = self.run_test(
+            "Create Checkout - Valid Plan",
+            "POST",
+            "billing/create-checkout",
+            200,
+            data=checkout_data
+        )
+        
+        session_id = None
+        if success:
+            if 'url' in response and 'session_id' in response:
+                session_id = response['session_id']
+                print(f"   🔗 Checkout URL created")
+                print(f"   🆔 Session ID: {session_id}")
+            else:
+                print(f"   ❌ Missing url or session_id in response")
+                self.failed_tests.append("Missing checkout URL or session ID")
+        
+        # Test POST /api/billing/create-checkout with invalid plan_id  
+        print("\n🔍 Testing create checkout with invalid plan...")
+        invalid_checkout_data = {
+            "plan_id": "invalid_plan",
+            "origin_url": "https://lead-ai-1.preview.emergentagent.com"
+        }
+        success, response = self.run_test(
+            "Create Checkout - Invalid Plan",
+            "POST", 
+            "billing/create-checkout",
+            400,
+            data=invalid_checkout_data
+        )
+        
+        if success:
+            print(f"   ✅ Correctly rejected invalid plan_id")
+        
+        # Test GET /api/billing/status/{session_id} if we have a session_id
+        if session_id:
+            print(f"\n🔍 Testing billing status for session {session_id}...")
+            success, response = self.run_test(
+                "Get Billing Status", 
+                "GET",
+                f"billing/status/{session_id}",
+                200
+            )
+            
+            if success:
+                status = response.get('status', 'unknown')
+                payment_status = response.get('payment_status', 'unknown')  
+                print(f"   💳 Payment status: {payment_status}")
+                print(f"   📋 Session status: {status}")
+        
+        # Test webhook endpoint exists
+        print("\n🔍 Testing Stripe webhook endpoint...")
+        # Use a direct POST to the webhook with minimal data to see if endpoint exists
+        webhook_url = f"{self.base_url}/api/webhook/stripe"
+        try:
+            response = requests.post(
+                webhook_url,
+                json={}, 
+                headers={"Stripe-Signature": "test_signature"},
+                timeout=10
+            )
+            if response.status_code == 200:
+                print(f"   ✅ Webhook endpoint accessible (status 200)")
+                self.tests_passed += 1
+            else:
+                print(f"   ⚠️ Webhook endpoint returned {response.status_code}")
+            self.tests_run += 1
+        except Exception as e:
+            print(f"   ❌ Webhook endpoint error: {str(e)}")
+            self.failed_tests.append(f"Webhook endpoint error: {str(e)}")
+            self.tests_run += 1
     def print_summary(self):
         """Print test summary"""
         print("\n" + "="*60)
@@ -542,6 +673,7 @@ def main():
         tester.test_analytics_endpoints()
         tester.test_templates_endpoints()
         tester.test_settings_endpoints()
+        tester.test_billing_endpoints()
         
     except KeyboardInterrupt:
         print("\n⚠️ Tests interrupted by user")

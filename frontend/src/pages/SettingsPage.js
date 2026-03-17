@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,19 +9,27 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { User, Link2, Bell, Shield } from "lucide-react";
+import { User, Link2, Bell, Shield, CreditCard, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
+
+const PLAN_NAMES = { starter: "Starter", growth: "Growth", enterprise: "Enterprise", free: "Free" };
 
 export default function SettingsPage() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [settings, setSettings] = useState(null);
+  const [subscription, setSubscription] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetch = async () => {
       try {
-        const res = await api.get("/settings");
-        setSettings(res.data);
+        const [setRes, subRes] = await Promise.all([
+          api.get("/settings"),
+          api.get("/billing/subscription"),
+        ]);
+        setSettings(setRes.data);
+        setSubscription(subRes.data);
       } catch (err) { console.error(err); }
       finally { setLoading(false); }
     };
@@ -68,6 +77,59 @@ export default function SettingsPage() {
             <Label className="text-slate-400 text-xs">Company</Label>
             <Input data-testid="settings-company-input" disabled value={user?.company || "Not set"} className="bg-slate-950/50 border-slate-700 text-slate-300" />
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Subscription */}
+      <Card className="bg-slate-900/50 border-slate-800">
+        <CardHeader className="pb-3">
+          <div className="flex items-center gap-2">
+            <CreditCard className="w-4 h-4 text-blue-400" />
+            <CardTitle className="text-base font-semibold text-white">Subscription</CardTitle>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between p-4 rounded-lg bg-slate-950/30 border border-slate-800/50">
+            <div>
+              <p className="text-sm font-semibold text-white">
+                {PLAN_NAMES[subscription?.plan] || "Free"}
+                {subscription?.status === 'active' && (
+                  <Badge className="ml-2 bg-emerald-500/20 text-emerald-400 border-emerald-500/30 text-[10px]">Active</Badge>
+                )}
+              </p>
+              {subscription?.started && (
+                <p className="text-xs text-slate-500 mt-1">Since {new Date(subscription.started).toLocaleDateString()}</p>
+              )}
+              {subscription?.plan_details && (
+                <p className="text-xs text-slate-400 mt-1">
+                  {subscription.plan_details.leads_limit === -1 ? "Unlimited" : subscription.plan_details.leads_limit} leads &middot;
+                  {subscription.plan_details.ai_daily_limit === -1 ? " Unlimited" : ` ${subscription.plan_details.ai_daily_limit}`} AI/day &middot;
+                  {subscription.plan_details.team_limit === -1 ? " Unlimited" : ` ${subscription.plan_details.team_limit}`} team
+                </p>
+              )}
+            </div>
+            <Button variant="ghost" size="sm" data-testid="manage-subscription-btn"
+              onClick={() => navigate("/pricing")}
+              className="text-blue-400 hover:text-blue-300 text-xs">
+              {subscription?.plan === 'free' ? 'Upgrade' : 'Manage'} <ArrowRight className="w-3 h-3 ml-1" />
+            </Button>
+          </div>
+          {subscription?.transactions?.length > 0 && (
+            <div>
+              <p className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Recent Payments</p>
+              {subscription.transactions.map((tx) => (
+                <div key={tx.id} className="flex items-center justify-between py-2 border-b border-slate-800/30 last:border-0">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-slate-400">{PLAN_NAMES[tx.plan_id] || tx.plan_id}</span>
+                    <Badge variant="outline" className={`text-[9px] ${tx.payment_status === 'paid' ? 'text-emerald-400 border-emerald-500/30' : 'text-amber-400 border-amber-500/30'}`}>
+                      {tx.payment_status}
+                    </Badge>
+                  </div>
+                  <span className="text-xs text-slate-500">${tx.amount}</span>
+                </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
 
