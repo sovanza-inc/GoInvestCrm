@@ -4,11 +4,47 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Zap, ArrowRight, Check, Star, Users, Sparkles, MessageSquare, BarChart3, FileText, Target, Clock, Crown, Rocket } from "lucide-react";
+import {
+  Zap, ArrowRight, Check, Star, Users, Sparkles, MessageSquare,
+  BarChart3, FileText, Target, Crown, Rocket, Globe, Brain,
+  Send, Filter, TrendingUp, Clock, Shield, Inbox, ChevronRight,
+  LayoutDashboard, UserCheck, Bot, Mail, Workflow, PieChart
+} from "lucide-react";
 
 const HERO_IMG = "https://static.prod-images.emergentagent.com/jobs/3007fe4f-ebc2-4c42-97e8-25bcb565ef33/images/819e9d66cc0feb90faa6536c8e01e5548a059e6bb8636f1a14667e09c252ffa8.png";
 
-/* ─── Feature Tabs Data ─── */
+/* ─── Solution Tabs ─── */
+const solutionTabs = [
+  { key: "scoring", label: "Lead Scoring" },
+  { key: "copilot", label: "AI Copilot" },
+  { key: "campaign", label: "Campaign" },
+];
+
+const solutionStats = {
+  scoring: [
+    { value: "80%", label: "Increase in engagement", color: "from-emerald-500 to-teal-600" },
+    { value: "35%", label: "Higher Conversion Rates", color: "from-blue-500 to-blue-700" },
+    { value: "2X", label: "More leads qualified", color: "from-violet-500 to-purple-700" },
+  ],
+  copilot: [
+    { value: "3X", label: "Faster reply time", color: "from-emerald-500 to-teal-600" },
+    { value: "60%", label: "Less manual effort", color: "from-blue-500 to-blue-700" },
+    { value: "92%", label: "Customer satisfaction", color: "from-violet-500 to-purple-700" },
+  ],
+  campaign: [
+    { value: "5X", label: "More outreach volume", color: "from-emerald-500 to-teal-600" },
+    { value: "48%", label: "Open rate average", color: "from-blue-500 to-blue-700" },
+    { value: "23%", label: "Reply rate achieved", color: "from-violet-500 to-purple-700" },
+  ],
+};
+
+const solutionBanners = {
+  scoring: "AI analyzes engagement, followers, bio keywords, and activity to score every lead 1-100 — so you focus energy on prospects that convert.",
+  copilot: "Get AI-generated reply suggestions for every conversation — casual, professional, or direct. Never struggle with what to say again.",
+  campaign: "Using campaigns, businesses can easily reach out to prospects through any social platform with personalized messages at scale.",
+};
+
+/* ─── Feature Tabs (Everything Section) ─── */
 const featureTabs = [
   { key: "scoring", icon: Target, label: "Lead Scoring" },
   { key: "copilot", icon: Sparkles, label: "AI Copilot" },
@@ -18,7 +54,7 @@ const featureTabs = [
   { key: "outreach", icon: Rocket, label: "Outreach" },
 ];
 
-/* ─── Mini Mockups for Feature Tabs ─── */
+/* ─── Mini Mockups ─── */
 function LeadScoringMockup() {
   const rows = [
     { name: "Sarah Mitchell", handle: "@sarah.creates", score: 85, status: "Qualified", platform: "IG" },
@@ -38,7 +74,7 @@ function LeadScoringMockup() {
           <span className="text-[10px] text-slate-400">{r.platform}</span>
           <span className={`text-xs font-bold ${r.score >= 80 ? "text-emerald-400" : "text-amber-400"}`}>{r.score}</span>
           <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 w-fit">{r.status}</span>
-          <span className="text-[10px] text-violet-400">Score AI</span>
+          <span className="text-[10px] text-violet-400 cursor-pointer">Score AI</span>
         </div>
       ))}
     </div>
@@ -139,7 +175,7 @@ function OutreachMockup() {
       </div>
       <div className="p-3 rounded-lg bg-slate-800/40 border border-slate-800/60">
         <p className="text-[10px] text-slate-500 mb-1">Target: Instagram creators, 10K+ followers, 3%+ engagement</p>
-        <div className="flex gap-2"><div className="w-3 h-3 rounded-full bg-emerald-500" /><div className="flex-1 h-3 bg-emerald-500/20 rounded-full overflow-hidden"><div className="h-full w-[67%] bg-emerald-500 rounded-full" /></div><span className="text-[10px] text-slate-400">67%</span></div>
+        <div className="flex gap-2 items-center"><div className="w-3 h-3 rounded-full bg-emerald-500" /><div className="flex-1 h-3 bg-emerald-500/20 rounded-full overflow-hidden"><div className="h-full w-[67%] bg-emerald-500 rounded-full" /></div><span className="text-[10px] text-slate-400">67%</span></div>
       </div>
       <div className="p-3 rounded-lg bg-violet-500/5 border border-violet-500/10">
         <div className="flex items-center gap-1.5 mb-1"><Sparkles className="w-3 h-3 text-violet-400" /><span className="text-[10px] font-bold text-violet-300">AI personalized each message</span></div>
@@ -171,6 +207,7 @@ export default function LandingPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [activeFeature, setActiveFeature] = useState("scoring");
+  const [activeSolution, setActiveSolution] = useState("scoring");
   const ActiveMockup = FEATURE_MOCKUPS[activeFeature];
 
   const handleGetStarted = () => navigate(user ? "/dashboard" : "/login");
@@ -181,6 +218,7 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-white text-slate-900" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+
       {/* ━━━ Navbar ━━━ */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-100" data-testid="landing-navbar">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
@@ -190,6 +228,7 @@ export default function LandingPage() {
           </div>
           <div className="hidden md:flex items-center gap-8">
             <a href="#features" className="text-sm text-slate-500 hover:text-slate-900 transition-colors font-medium">Features</a>
+            <a href="#solutions" className="text-sm text-slate-500 hover:text-slate-900 transition-colors font-medium">Solutions</a>
             <a href="#pricing" className="text-sm text-slate-500 hover:text-slate-900 transition-colors font-medium">Pricing</a>
           </div>
           <div className="flex items-center gap-3">
@@ -213,25 +252,23 @@ export default function LandingPage() {
 
       {/* ━━━ Hero ━━━ */}
       <section className="pt-28 pb-8 px-6">
-        <div className="max-w-4xl mx-auto text-center animate-fade-in">
+        <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 leading-tight mb-6" style={{ fontFamily: 'Outfit, sans-serif' }}>
             Grow your revenue with{" "}
             <span className="inline-flex items-center"><Sparkles className="w-8 h-8 sm:w-10 sm:h-10 text-violet-500 mr-1" /><span className="bg-gradient-to-r from-violet-600 to-blue-500 bg-clip-text text-transparent">AI-Powered</span></span>
             {" "}social selling platform.
           </h1>
           <p className="text-base md:text-lg text-slate-500 max-w-2xl mx-auto mb-10 leading-relaxed">
-            Score leads, automate DM responses, and close deals faster - all from one platform built for creators who sell on social.
+            Score leads, automate DM responses, and close deals faster — all from one platform built for creators who sell on social.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-4">
             <Button onClick={handleGetStarted} data-testid="hero-cta-btn"
               className="text-white font-bold text-base h-14 px-10 rounded-full shadow-xl hover:-translate-y-0.5 transition-all"
               style={{ background: "linear-gradient(135deg, #7c3aed, #3b82f6)" }}>
-              <ArrowRight className="w-5 h-5 mr-2" /> Start for free
+              <ArrowRight className="w-5 h-5 mr-2" /> Start free trial
             </Button>
           </div>
           <p className="text-sm text-slate-400 mb-8">7 days free trial. No Credit Card Required.</p>
-
-          {/* Star Rating */}
           <div className="flex items-center justify-center gap-1.5 mb-12">
             {[1,2,3,4,5].map(i => <Star key={i} className={`w-4 h-4 ${i <= 4 ? "text-amber-400 fill-amber-400" : "text-amber-300 fill-amber-300"}`} />)}
             <span className="text-sm font-bold text-slate-700 ml-1">4.8</span>
@@ -244,7 +281,6 @@ export default function LandingPage() {
       <section className="px-6 pb-16">
         <div className="max-w-5xl mx-auto">
           <div className="rounded-2xl border border-slate-200 bg-white shadow-2xl shadow-slate-200/50 overflow-hidden">
-            {/* Browser chrome */}
             <div className="flex items-center gap-2 px-4 py-3 bg-slate-50 border-b border-slate-200">
               <div className="flex gap-1.5"><div className="w-3 h-3 rounded-full bg-red-400" /><div className="w-3 h-3 rounded-full bg-amber-400" /><div className="w-3 h-3 rounded-full bg-emerald-400" /></div>
               <div className="flex-1 mx-4"><div className="h-6 bg-slate-100 rounded-md flex items-center px-3"><span className="text-[10px] text-slate-400">app.gosocial.io/dashboard</span></div></div>
@@ -266,31 +302,249 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ━━━ Dark Cosmic Section - Animated Text ━━━ */}
-      <section className="py-24 px-6 relative overflow-hidden" style={{ background: "radial-gradient(ellipse at 50% 0%, rgba(139,92,246,0.12) 0%, transparent 60%), radial-gradient(ellipse at 80% 80%, rgba(59,130,246,0.08) 0%, transparent 50%), #020617" }}>
+      {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           SECTION: Transforming businesses with our solutions
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+      <section id="solutions" className="relative py-24 px-6 overflow-hidden" style={{ background: "radial-gradient(ellipse at 30% 50%, rgba(139,92,246,0.08) 0%, transparent 50%), radial-gradient(ellipse at 70% 50%, rgba(59,130,246,0.06) 0%, transparent 50%), #020617" }}>
+        {/* Light streaks */}
+        <div className="absolute top-0 left-0 w-full h-full pointer-events-none" style={{ background: "linear-gradient(160deg, rgba(255,255,255,0.02) 0%, transparent 30%), linear-gradient(200deg, rgba(255,255,255,0.015) 0%, transparent 25%)" }} />
+        <div className="absolute -top-40 left-1/3 w-[500px] h-[500px] rounded-full opacity-[0.07]" style={{ background: "radial-gradient(circle, rgba(139,92,246,0.6), transparent 70%)" }} />
+
+        <div className="max-w-6xl mx-auto relative z-10">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight mb-4" style={{ fontFamily: 'Outfit, sans-serif' }}>
+              Transforming businesses<br />with our solutions
+            </h2>
+            <p className="text-base text-slate-400 max-w-xl mx-auto">
+              Businesses are achieving growth at a greater pace with our AI-powered social selling platform.
+            </p>
+          </div>
+
+          {/* Solution Tabs */}
+          <div className="flex items-center justify-center gap-6 md:gap-16 mb-10" data-testid="solution-tabs">
+            {solutionTabs.map(tab => (
+              <button key={tab.key} onClick={() => setActiveSolution(tab.key)} data-testid={`solution-tab-${tab.key}`}
+                className={`relative pb-3 text-base font-semibold transition-colors ${activeSolution === tab.key ? "text-white" : "text-slate-500 hover:text-slate-300"}`}>
+                {tab.label}
+                {activeSolution === tab.key && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-violet-500 to-blue-500 rounded-full" />}
+              </button>
+            ))}
+          </div>
+
+          {/* Stat Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6" data-testid="solution-stats">
+            {solutionStats[activeSolution].map((stat, i) => (
+              <div key={i} className={`rounded-2xl p-8 bg-gradient-to-br ${stat.color} transition-all duration-300`} data-testid={`stat-card-${i}`}>
+                <p className="text-4xl sm:text-5xl font-extrabold text-white mb-2" style={{ fontFamily: 'Outfit, sans-serif' }}>{stat.value}</p>
+                <p className="text-sm text-white/80 font-medium">{stat.label}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Banner */}
+          <div className="rounded-2xl p-8 md:p-10 bg-gradient-to-br from-violet-600/80 to-purple-800/80 backdrop-blur-sm" data-testid="solution-banner">
+            <p className="text-base md:text-lg text-white/90 text-center leading-relaxed max-w-3xl mx-auto">
+              {solutionBanners[activeSolution]}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           SECTION: AI Sales Copilot — Bento Grid
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+      <section className="py-24 px-6 relative overflow-hidden" style={{ background: "linear-gradient(180deg, #f5f0ff 0%, #eef2ff 50%, #f0fdf4 100%)" }}>
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 leading-tight mb-4" style={{ fontFamily: 'Outfit, sans-serif' }}>
+              AI Sales Copilot for better,<br />faster & smarter conversations
+            </h2>
+            <p className="text-base text-slate-500 max-w-2xl mx-auto">
+              Meet the next evolution of social selling: AI-powered reply suggestions that go beyond templates to drive leads, boost engagement, and help creators close efficiently.
+            </p>
+          </div>
+
+          {/* Bento Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4" data-testid="ai-bento-grid">
+            {/* Large card - spans 2 cols */}
+            <div className="md:col-span-2 rounded-2xl p-8 relative overflow-hidden" style={{ background: "linear-gradient(135deg, #fef3c7, #fde68a, #fbbf24)" }}>
+              <h3 className="text-lg font-bold text-amber-900 mb-2">Smart Reply Suggestions</h3>
+              <p className="text-sm text-amber-800/80 mb-6 max-w-md">
+                Create personalized replies effortlessly with our AI that analyzes conversation context and suggests the perfect response.
+              </p>
+              <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-amber-200/50">
+                <div className="space-y-2">
+                  {["Casual: Hey! Love what you're building...", "Professional: Thank you for your interest, I'd be happy to...", "Direct: Here's exactly what we can offer..."].map((s, i) => (
+                    <div key={i} className="flex items-center gap-2 p-2.5 rounded-lg bg-white/80 border border-amber-100">
+                      <Sparkles className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                      <span className="text-xs text-amber-900">{s}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Icon card */}
+            <div className="rounded-2xl p-8 flex flex-col items-center justify-center text-center" style={{ background: "linear-gradient(135deg, #ddd6fe, #c4b5fd)" }}>
+              <div className="w-20 h-20 rounded-full bg-violet-500/20 flex items-center justify-center mb-4">
+                <Brain className="w-10 h-10 text-violet-700" />
+              </div>
+              <h3 className="text-lg font-bold text-violet-900 mb-2">Conversation Intelligence</h3>
+              <p className="text-sm text-violet-700/80">AI understands context, tone, and intent to provide relevant suggestions.</p>
+            </div>
+
+            {/* Small card */}
+            <div className="rounded-2xl p-8 relative overflow-hidden" style={{ background: "linear-gradient(135deg, #d1fae5, #a7f3d0)" }}>
+              <h3 className="text-lg font-bold text-emerald-900 mb-2">Lead Scoring Engine</h3>
+              <p className="text-sm text-emerald-800/80 mb-4">
+                Automatically score and prioritize every lead based on engagement, followers, and behavior patterns.
+              </p>
+              <div className="flex items-center gap-3">
+                <div className="flex -space-x-2">
+                  {["SM", "JW", "AP"].map((n, i) => (
+                    <div key={i} className="w-8 h-8 rounded-full bg-emerald-600 text-white text-[10px] font-bold flex items-center justify-center border-2 border-emerald-100">{n}</div>
+                  ))}
+                </div>
+                <div className="flex gap-1">
+                  {[85, 92, 88].map((s, i) => (
+                    <span key={i} className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-600/20 text-emerald-800 font-bold">{s}</span>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Center card */}
+            <div className="rounded-2xl p-8 flex flex-col items-center justify-center text-center" style={{ background: "linear-gradient(135deg, #bfdbfe, #93c5fd)" }}>
+              <div className="w-16 h-16 rounded-2xl bg-blue-600/20 flex items-center justify-center mb-4">
+                <Globe className="w-8 h-8 text-blue-800" />
+              </div>
+              <h3 className="text-lg font-bold text-blue-900 mb-2">Multi-Platform Support</h3>
+              <p className="text-sm text-blue-800/80">Seamlessly integrate with Instagram, Facebook, LinkedIn, and Twitter in one place.</p>
+            </div>
+
+            {/* Right card */}
+            <div className="rounded-2xl p-8" style={{ background: "linear-gradient(135deg, #fce7f3, #fbcfe8)" }}>
+              <h3 className="text-lg font-bold text-pink-900 mb-2">Template Library</h3>
+              <p className="text-sm text-pink-800/80 mb-4">
+                Pre-built and custom templates for every stage of the sales funnel.
+              </p>
+              <div className="space-y-2">
+                {["Cold Outreach", "Follow-Up", "Objection Handling", "Closing"].map((t, i) => (
+                  <div key={i} className="flex items-center gap-2 text-xs text-pink-800">
+                    <Check className="w-3.5 h-3.5 text-pink-600" />{t}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           SECTION: Unified Smart CRM
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+      <section className="py-24 px-6 relative overflow-hidden" style={{ background: "linear-gradient(180deg, #eff6ff 0%, #e0f2fe 60%, #f0f9ff 100%)" }}>
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 leading-tight mb-4" style={{ fontFamily: 'Outfit, sans-serif' }}>
+              Unified smart CRM powered by<br />social messaging
+            </h2>
+            <p className="text-base text-slate-500 max-w-2xl mx-auto">
+              GoSocial CRM is an omnichannel powerhouse, blending DM management with advanced AI tools to deliver seamless, personalized sales support for creators and entrepreneurs alike.
+            </p>
+          </div>
+
+          {/* CRM Feature Bento Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4" data-testid="crm-bento-grid">
+            {/* Large card */}
+            <div className="md:col-span-2 rounded-2xl bg-white border border-slate-200 shadow-lg overflow-hidden">
+              <div className="p-6 pb-3">
+                <h3 className="text-lg font-bold text-slate-900 mb-1">Centralized inbox</h3>
+                <p className="text-sm text-slate-500">Effortlessly engage and respond with seamless messaging across platforms.</p>
+              </div>
+              <div className="px-6 pb-6">
+                <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 space-y-2">
+                  {[
+                    { name: "Sarah Mitchell", msg: "What packages do you offer?", time: "2m", unread: true },
+                    { name: "James Wilson", msg: "Can you send case studies?", time: "15m", unread: true },
+                    { name: "Aisha Patel", msg: "I spend hours on DMs every day.", time: "1h", unread: false },
+                  ].map((c, i) => (
+                    <div key={i} className={`flex items-center gap-3 p-3 rounded-lg ${i === 0 ? "bg-blue-50 border border-blue-100" : "bg-white border border-slate-100"}`}>
+                      <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-[10px] font-bold text-slate-600">{c.name.split(" ").map(n => n[0]).join("")}</div>
+                      <div className="flex-1 min-w-0"><p className="text-xs font-medium text-slate-800 truncate">{c.name}</p><p className="text-[10px] text-slate-400 truncate">{c.msg}</p></div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] text-slate-400">{c.time}</span>
+                        {c.unread && <div className="w-2 h-2 rounded-full bg-blue-500" />}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Channel Integration */}
+            <div className="rounded-2xl p-6 text-white relative overflow-hidden" style={{ background: "linear-gradient(160deg, #1e3a5f, #1e40af)" }}>
+              <h3 className="text-lg font-bold mb-2">Channel integration</h3>
+              <p className="text-sm text-blue-200/80 mb-6">Connect Instagram, Facebook, LinkedIn, and more to manage all your conversations in one place seamlessly.</p>
+              <div className="flex flex-wrap gap-3 justify-center">
+                {["IG", "FB", "LI", "TW"].map((p, i) => (
+                  <div key={i} className="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center text-xs font-bold text-white border border-white/10">{p}</div>
+                ))}
+              </div>
+            </div>
+
+            {/* Analytics Card */}
+            <div className="rounded-2xl bg-white border border-slate-200 shadow-lg p-6">
+              <h3 className="text-lg font-bold text-slate-900 mb-1">Pipeline analytics</h3>
+              <p className="text-sm text-slate-500 mb-4">Track every stage from first contact to closed deal.</p>
+              <div className="space-y-2">
+                {[{ stage: "New", pct: 100 }, { stage: "Contacted", pct: 72 }, { stage: "Qualified", pct: 48 }, { stage: "Closed", pct: 18 }].map((s, i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <span className="text-[10px] text-slate-500 w-16">{s.stage}</span>
+                    <div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden"><div className="h-full rounded-full bg-blue-500" style={{ width: `${s.pct}%` }} /></div>
+                    <span className="text-[10px] font-bold text-slate-700">{s.pct}%</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* AI Scoring */}
+            <div className="rounded-2xl bg-white border border-slate-200 shadow-lg p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-10 h-10 rounded-xl bg-violet-100 flex items-center justify-center"><Target className="w-5 h-5 text-violet-600" /></div>
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 mb-1">AI Lead Scoring</h3>
+              <p className="text-sm text-slate-500">Automatically rank prospects based on conversion likelihood with AI analysis.</p>
+            </div>
+
+            {/* Outreach */}
+            <div className="rounded-2xl bg-white border border-slate-200 shadow-lg p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center"><Send className="w-5 h-5 text-emerald-600" /></div>
+              </div>
+              <h3 className="text-lg font-bold text-slate-900 mb-1">Smart Outreach</h3>
+              <p className="text-sm text-slate-500">AI-personalized opening messages at scale with smart scheduling.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           SECTION: Everything you need in one place (Features)
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+      <section id="features" className="py-24 px-6 relative overflow-hidden" style={{ background: "radial-gradient(ellipse at 50% 0%, rgba(139,92,246,0.10) 0%, transparent 50%), radial-gradient(ellipse at 80% 100%, rgba(59,130,246,0.06) 0%, transparent 40%), #020617" }}>
         {/* Light streaks */}
         <div className="absolute inset-0 pointer-events-none" style={{ background: "linear-gradient(135deg, rgba(255,255,255,0.03) 0%, transparent 40%)" }} />
         <div className="absolute top-0 right-0 w-96 h-96 rounded-full opacity-10" style={{ background: "radial-gradient(circle, rgba(139,92,246,0.5), transparent 70%)" }} />
 
-        <div className="max-w-4xl mx-auto text-center relative z-10">
-          <p className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-300 leading-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>
-            Score leads with{" "}<span className="text-blue-400">AI Lead Scoring</span>,<br />
-            close deals with{" "}<span className="text-violet-400">AI Sales Copilot</span>,<br />
-            and manage everything in your{" "}<span className="text-emerald-400">Social CRM</span>.
-          </p>
-        </div>
-      </section>
-
-      {/* ━━━ Features Section ━━━ */}
-      <section id="features" className="py-20 px-6 relative" style={{ background: "linear-gradient(180deg, #020617 0%, #0a0f1f 100%)" }}>
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-6xl mx-auto relative z-10">
           <div className="text-center mb-12">
             <Badge className="bg-slate-800 text-slate-300 border-slate-700 text-xs px-4 py-1 mb-4 uppercase tracking-widest font-bold">Features</Badge>
-            <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight mb-4" style={{ fontFamily: 'Outfit, sans-serif' }}>
               Everything you need in one place
             </h2>
             <p className="text-base text-slate-400 mt-3 max-w-xl mx-auto">
-              GoSocial combines lead intelligence, AI conversations, and pipeline management into one creator-focused platform.
+              GoSocial delivers AI-powered lead scoring, seamless inbox management, and advanced outreach tools. Perfect for creators, yet versatile across industries.
             </p>
           </div>
 
@@ -327,7 +581,9 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ━━━ Pricing ━━━ */}
+      {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           SECTION: Pricing
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
       <section id="pricing" className="py-20 px-6 bg-white">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
@@ -371,16 +627,21 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ━━━ Final CTA ━━━ */}
-      <section className="py-20 px-6 relative overflow-hidden" style={{ background: "radial-gradient(ellipse at 50% 80%, rgba(59,130,246,0.08) 0%, transparent 60%), #020617" }}>
+      {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           SECTION: Final CTA — "Step into the era..."
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+      <section className="py-24 px-6 relative overflow-hidden" style={{ background: "radial-gradient(ellipse at 50% 80%, rgba(59,130,246,0.08) 0%, transparent 60%), #020617" }}>
         <div className="max-w-3xl mx-auto text-center relative z-10">
-          <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight mb-4" style={{ fontFamily: 'Outfit, sans-serif' }}>Get started today!</h2>
-          <p className="text-base text-slate-400 mb-10">Join creators already converting followers into customers with AI.</p>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight mb-4" style={{ fontFamily: 'Outfit, sans-serif' }}>
+            Step into the era of<br />
+            <span className="bg-gradient-to-r from-violet-400 to-blue-400 bg-clip-text text-transparent">AI-driven social selling!</span>
+          </h2>
+          <p className="text-base text-slate-400 mb-10 max-w-lg mx-auto">Join creators already converting followers into customers with the power of AI.</p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button onClick={handleGetStarted} data-testid="final-cta-btn"
               className="text-white font-bold text-base h-14 px-10 rounded-full shadow-xl hover:-translate-y-0.5 transition-all"
               style={{ background: "linear-gradient(135deg, #7c3aed, #3b82f6)" }}>
-              <ArrowRight className="w-5 h-5 mr-2" /> Start for free
+              <ArrowRight className="w-5 h-5 mr-2" /> Start free trial
             </Button>
             <Button variant="outline" onClick={handleGoogleSignIn} data-testid="final-google-btn"
               className="bg-transparent border-slate-700 text-slate-300 hover:bg-slate-800 font-medium h-14 px-8 rounded-full">
@@ -392,14 +653,75 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ━━━ Footer ━━━ */}
-      <footer className="py-8 px-6 bg-[#020617] border-t border-slate-800/50">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-md bg-blue-600 flex items-center justify-center"><Zap className="w-3 h-3 text-white" /></div>
-            <span className="text-sm font-bold text-white">GoSocial</span>
+      {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           SECTION: Footer — Multi-Column
+         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
+      <footer className="py-16 px-6 bg-[#020617] border-t border-slate-800/50" data-testid="landing-footer">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
+            {/* Products */}
+            <div>
+              <h4 className="text-sm font-bold text-white mb-4">Products</h4>
+              <ul className="space-y-2.5">
+                {["AI Copilot", "Lead Scoring", "CRM Inbox", "Templates", "Outreach", "All Features"].map((l, i) => (
+                  <li key={i}><a href="#features" className="text-sm text-slate-500 hover:text-slate-300 transition-colors">{l}</a></li>
+                ))}
+              </ul>
+            </div>
+            {/* Channels */}
+            <div>
+              <h4 className="text-sm font-bold text-white mb-4">Channels</h4>
+              <ul className="space-y-2.5">
+                {["Instagram", "Facebook", "LinkedIn", "Twitter/X", "WhatsApp"].map((l, i) => (
+                  <li key={i}><span className="text-sm text-slate-500">{l}</span></li>
+                ))}
+              </ul>
+            </div>
+            {/* Solutions */}
+            <div>
+              <h4 className="text-sm font-bold text-white mb-4">Solutions</h4>
+              <ul className="space-y-2.5">
+                {["Lead Generation", "Sales Automation", "Customer Engagement", "E-commerce", "Coaching"].map((l, i) => (
+                  <li key={i}><a href="#solutions" className="text-sm text-slate-500 hover:text-slate-300 transition-colors">{l}</a></li>
+                ))}
+              </ul>
+            </div>
+            {/* GoSocial */}
+            <div>
+              <h4 className="text-sm font-bold text-white mb-4">GoSocial</h4>
+              <ul className="space-y-2.5">
+                {["About Us", "Contact", "Careers", "Blog"].map((l, i) => (
+                  <li key={i}><span className="text-sm text-slate-500">{l}</span></li>
+                ))}
+              </ul>
+            </div>
+            {/* Resources */}
+            <div>
+              <h4 className="text-sm font-bold text-white mb-4">Resources</h4>
+              <ul className="space-y-2.5">
+                {["Product Guide", "Integrations", "Developer API", "Blog"].map((l, i) => (
+                  <li key={i}><span className="text-sm text-slate-500">{l}</span></li>
+                ))}
+              </ul>
+            </div>
           </div>
-          <p className="text-xs text-slate-600">AI-powered social selling platform for creators</p>
+
+          {/* Divider */}
+          <div className="border-t border-slate-800/50 pt-8 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center"><Zap className="w-4 h-4 text-white" /></div>
+              <div>
+                <span className="text-sm font-bold text-white">GoSocial</span>
+                <p className="text-xs text-slate-600">AI-powered social selling platform</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-6">
+              <span className="text-xs text-slate-600">Privacy Policy</span>
+              <span className="text-xs text-slate-600">Terms of Service</span>
+              <span className="text-xs text-slate-600">GDPR</span>
+            </div>
+            <p className="text-xs text-slate-600">&copy; {new Date().getFullYear()} GoSocial. All rights reserved.</p>
+          </div>
         </div>
       </footer>
     </div>
