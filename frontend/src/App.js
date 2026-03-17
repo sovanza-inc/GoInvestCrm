@@ -13,6 +13,8 @@ import AnalyticsPage from "@/pages/AnalyticsPage";
 import TemplatesPage from "@/pages/TemplatesPage";
 import SettingsPage from "@/pages/SettingsPage";
 import PricingPage from "@/pages/PricingPage";
+import BlogPage from "@/pages/BlogPage";
+import BlogDetailPage from "@/pages/BlogDetailPage";
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -28,6 +30,8 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
+      <Route path="/blog" element={<BlogPage />} />
+      <Route path="/blog/:slug" element={<BlogDetailPage />} />
       <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <LoginPage />} />
       <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
         <Route path="/dashboard" element={<DashboardPage />} />

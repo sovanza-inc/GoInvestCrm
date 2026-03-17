@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -690,18 +690,20 @@ export default function LandingPage() {
             <div>
               <h4 className="text-sm font-bold text-white mb-4">GoSocial</h4>
               <ul className="space-y-2.5">
-                {["About Us", "Contact", "Careers", "Blog"].map((l, i) => (
+                {["About Us", "Contact", "Careers"].map((l, i) => (
                   <li key={i}><span className="text-sm text-slate-500">{l}</span></li>
                 ))}
+                <li><Link to="/blog" className="text-sm text-slate-500 hover:text-slate-300 transition-colors">Blog</Link></li>
               </ul>
             </div>
             {/* Resources */}
             <div>
               <h4 className="text-sm font-bold text-white mb-4">Resources</h4>
               <ul className="space-y-2.5">
-                {["Product Guide", "Integrations", "Developer API", "Blog"].map((l, i) => (
+                {["Product Guide", "Integrations", "Developer API"].map((l, i) => (
                   <li key={i}><span className="text-sm text-slate-500">{l}</span></li>
                 ))}
+                <li><Link to="/blog" className="text-sm text-slate-500 hover:text-slate-300 transition-colors">Blog</Link></li>
               </ul>
             </div>
           </div>
