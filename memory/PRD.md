@@ -44,6 +44,22 @@ SaaS platform helping content creators convert social media followers into payin
   - Webhook handling for payment confirmation
   - Subscription status in user profile and Settings page
   - payment_transactions collection for audit trail
+- **Landing Page** (March 2026):
+  - Public marketing page with hero, features grid, how it works, pricing preview
+  - "7-day free trial on Growth plan" badge
+  - Dual CTAs: Start Free Trial + Sign in with Google
+  - Stats section, footer
+- **Google Social Login** (March 2026):
+  - Emergent-managed Google OAuth integration
+  - "Continue with Google" on both Sign In and Sign Up tabs
+  - Backend session exchange via /api/auth/google
+  - Automatic user creation for new Google users
+- **7-Day Free Trial** (March 2026):
+  - New users (email or Google) get Growth plan trial
+  - Trial status tracked with trial_end date
+  - Auto-downgrade to Free when trial expires
+  - "Trial - X days left" badge in Settings
+  - days_remaining in billing/subscription API
 
 ## Prioritized Backlog
 
