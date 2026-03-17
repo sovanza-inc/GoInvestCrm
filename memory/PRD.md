@@ -37,6 +37,13 @@ SaaS platform helping content creators convert social media followers into payin
 - Settings with notification preferences
 - Dark theme SaaS UI with Outfit + Plus Jakarta Sans fonts
 - Sidebar navigation, responsive design
+- **Stripe Subscription System** (March 2026):
+  - 3 tiers: Starter ($29/mo), Growth ($79/mo), Enterprise ($199/mo)
+  - Stripe Checkout integration with session management
+  - Payment status polling on frontend
+  - Webhook handling for payment confirmation
+  - Subscription status in user profile and Settings page
+  - payment_transactions collection for audit trail
 
 ## Prioritized Backlog
 
