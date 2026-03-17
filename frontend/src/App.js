@@ -1,9 +1,11 @@
 import "@/App.css";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { Toaster } from "sonner";
 import Layout from "@/components/Layout";
+import LandingPage from "@/pages/LandingPage";
 import LoginPage from "@/pages/LoginPage";
+import AuthCallback from "@/pages/AuthCallback";
 import DashboardPage from "@/pages/DashboardPage";
 import LeadsPage from "@/pages/LeadsPage";
 import CRMPage from "@/pages/CRMPage";
@@ -25,26 +27,36 @@ function AppRoutes() {
 
   return (
     <Routes>
-      <Route path="/login" element={user ? <Navigate to="/" /> : <LoginPage />} />
-      <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
-        <Route index element={<DashboardPage />} />
-        <Route path="leads" element={<LeadsPage />} />
-        <Route path="crm" element={<CRMPage />} />
-        <Route path="analytics" element={<AnalyticsPage />} />
-        <Route path="templates" element={<TemplatesPage />} />
-        <Route path="pricing" element={<PricingPage />} />
-        <Route path="billing/success" element={<PricingPage />} />
-        <Route path="settings" element={<SettingsPage />} />
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <LoginPage />} />
+      <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
+        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/leads" element={<LeadsPage />} />
+        <Route path="/crm" element={<CRMPage />} />
+        <Route path="/analytics" element={<AnalyticsPage />} />
+        <Route path="/templates" element={<TemplatesPage />} />
+        <Route path="/pricing" element={<PricingPage />} />
+        <Route path="/billing/success" element={<PricingPage />} />
+        <Route path="/settings" element={<SettingsPage />} />
       </Route>
     </Routes>
   );
+}
+
+function AppRouter() {
+  const location = useLocation();
+  // CRITICAL: Check for session_id synchronously during render to handle Google OAuth callback
+  if (location.hash?.includes('session_id=')) {
+    return <AuthCallback />;
+  }
+  return <AppRoutes />;
 }
 
 function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <AppRoutes />
+        <AppRouter />
         <Toaster theme="dark" position="top-right" richColors />
       </AuthProvider>
     </BrowserRouter>

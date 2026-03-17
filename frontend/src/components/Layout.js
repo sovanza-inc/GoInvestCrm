@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { LayoutDashboard, Users, MessageSquare, BarChart3, FileText, Settings, LogOut, Menu, X, Zap, CreditCard } from "lucide-react";
 
 const navItems = [
-  { to: "/", icon: LayoutDashboard, label: "Dashboard" },
+  { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
   { to: "/leads", icon: Users, label: "Leads" },
   { to: "/crm", icon: MessageSquare, label: "CRM Inbox" },
   { to: "/analytics", icon: BarChart3, label: "Analytics" },
@@ -32,7 +32,7 @@ export default function Layout() {
 
       <nav className="flex-1 px-3 space-y-1 mt-4" data-testid="sidebar-nav">
         {navItems.map((item) => {
-          const isActive = location.pathname === item.to || (item.to !== "/" && location.pathname.startsWith(item.to));
+          const isActive = location.pathname === item.to || (item.to !== "/dashboard" && location.pathname.startsWith(item.to));
           return (
             <NavLink
               key={item.to}

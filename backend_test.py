@@ -70,16 +70,19 @@ class GoSocialAPITester:
         print("TESTING AUTHENTICATION ENDPOINTS")
         print("="*50)
         
-        # Test registration
+        # Test registration with 7-day trial
+        trial_user_email = "trial@test.com"
+        trial_user_password = "trial123"
+        
         reg_data = {
-            "name": self.test_user_name,
-            "email": self.test_user_email,
-            "password": self.test_user_password,
-            "company": "Test Company"
+            "name": "Trial User",
+            "email": trial_user_email,
+            "password": trial_user_password,
+            "company": "Trial Company"
         }
         
         success, response = self.run_test(
-            "User Registration",
+            "User Registration (with 7-day trial)",
             "POST",
             "auth/register",
             200,
@@ -87,18 +90,18 @@ class GoSocialAPITester:
         )
         
         if success and 'token' in response:
-            self.token = response['token']
-            self.user_id = response['user']['id']
-            print(f"   📝 Token obtained and user ID: {self.user_id}")
+            trial_token = response['token']
+            trial_user_id = response['user']['id']
+            print(f"   📝 Trial user token obtained, ID: {trial_user_id}")
         
-        # Test login
+        # Test login with existing test user (no trial)
         login_data = {
             "email": self.test_user_email,
             "password": self.test_user_password
         }
         
         success, response = self.run_test(
-            "User Login",
+            "User Login (existing user)",
             "POST", 
             "auth/login",
             200,
@@ -107,7 +110,34 @@ class GoSocialAPITester:
         
         if success and 'token' in response:
             self.token = response['token']
-            print(f"   📝 Login token obtained")
+            self.user_id = response['user']['id']
+            print(f"   📝 Login token obtained for existing user")
+        
+        # Test Google OAuth endpoint with invalid session
+        google_auth_data = {"session_id": "invalid_session_12345"}
+        success, response = self.run_test(
+            "Google OAuth (invalid session)",
+            "POST",
+            "auth/google",
+            401,  # Should reject invalid session
+            data=google_auth_data
+        )
+        
+        if success:
+            print(f"   ✅ Correctly rejected invalid Google session")
+        
+        # Test Google OAuth endpoint with missing session_id
+        google_auth_data_empty = {"session_id": ""}
+        success, response = self.run_test(
+            "Google OAuth (empty session_id)",
+            "POST",
+            "auth/google",
+            400,  # Should require session_id
+            data=google_auth_data_empty
+        )
+        
+        if success:
+            print(f"   ✅ Correctly rejected empty session_id")
         
         # Test get current user
         self.run_test(
@@ -538,10 +568,58 @@ class GoSocialAPITester:
                     else:
                         print(f"   ✅ {expected_plan} plan: ${actual_price}")
         
-        # Test GET /api/billing/subscription  
-        print("\n🔍 Testing subscription status endpoint...")
+        # Test GET /api/billing/subscription with trial user
+        print("\n🔍 Testing subscription status for trial user...")
+        
+        # First login as trial user to test trial status
+        trial_login_data = {
+            "email": "trial@test.com",
+            "password": "trial123"
+        }
+        
+        trial_success, trial_response = self.run_test(
+            "Login as Trial User",
+            "POST",
+            "auth/login", 
+            200,
+            data=trial_login_data
+        )
+        
+        if trial_success and 'token' in trial_response:
+            # Temporarily store current token
+            original_token = self.token
+            self.token = trial_response['token']
+            
+            success, response = self.run_test(
+                "Get Trial User Subscription",
+                "GET",
+                "billing/subscription", 
+                200
+            )
+            
+            if success:
+                plan = response.get('plan', 'unknown')
+                status = response.get('status', 'unknown')
+                days_remaining = response.get('days_remaining')
+                print(f"   📊 Trial user - Plan: {plan}, Status: {status}")
+                if days_remaining is not None:
+                    print(f"   📅 Days remaining: {days_remaining}")
+                    if status == 'trial' and days_remaining >= 0:
+                        print(f"   ✅ Trial status correctly showing")
+                    else:
+                        print(f"   ❌ Trial status issue")
+                        self.failed_tests.append("Trial status not showing correctly")
+                else:
+                    print(f"   ❌ Missing days_remaining for trial user")
+                    self.failed_tests.append("Missing days_remaining for trial user")
+            
+            # Restore original token
+            self.token = original_token
+        
+        # Test GET /api/billing/subscription with existing user (no trial)  
+        print("\n🔍 Testing subscription status for existing user...")
         success, response = self.run_test(
-            "Get User Subscription",
+            "Get Existing User Subscription",
             "GET",
             "billing/subscription", 
             200
@@ -550,7 +628,7 @@ class GoSocialAPITester:
         if success:
             plan = response.get('plan', 'unknown')
             status = response.get('status', 'unknown')
-            print(f"   📊 Current plan: {plan}, Status: {status}")
+            print(f"   📊 Existing user - Plan: {plan}, Status: {status}")
         
         # Test POST /api/billing/create-checkout with valid plan
         print("\n🔍 Testing create checkout with valid plan...")

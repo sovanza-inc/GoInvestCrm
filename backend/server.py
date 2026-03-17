@@ -13,6 +13,7 @@ from typing import List, Optional, Dict
 from datetime import datetime, timezone, timedelta
 import bcrypt
 import jwt
+import requests as http_requests
 from emergentintegrations.payments.stripe.checkout import StripeCheckout, CheckoutSessionResponse, CheckoutStatusResponse, CheckoutSessionRequest
 
 ROOT_DIR = Path(__file__).parent
@@ -99,6 +100,9 @@ class CheckoutRequest(BaseModel):
     plan_id: str
     origin_url: str
 
+class GoogleAuthRequest(BaseModel):
+    session_id: str
+
 # ==================== Auth Helpers ====================
 def hash_password(password: str) -> str:
     return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
@@ -140,6 +144,11 @@ async def register(data: UserCreate):
     }
     await db.users.insert_one(user_doc)
     token = create_token(user_id)
+    # Set 7-day trial on Growth plan
+    await db.users.update_one({'id': user_id}, {'$set': {
+        'subscription': 'growth', 'subscription_status': 'trial',
+        'trial_end': (datetime.now(timezone.utc) + timedelta(days=7)).isoformat()
+    }})
     return {'token': token, 'user': {'id': user_id, 'email': data.email, 'name': data.name, 'company': data.company or '', 'created_at': user_doc['created_at']}}
 
 @api_router.post("/auth/login")
@@ -153,6 +162,58 @@ async def login(data: UserLogin):
 @api_router.get("/auth/me")
 async def get_me(user=Depends(get_current_user)):
     return {'user': user}
+
+# ==================== Google OAuth ====================
+@api_router.post("/auth/google")
+async def google_auth(data: GoogleAuthRequest):
+    if not data.session_id:
+        raise HTTPException(status_code=400, detail="session_id required")
+    try:
+        resp = http_requests.get(
+            "https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data",
+            headers={"X-Session-ID": data.session_id}
+        )
+        if resp.status_code != 200:
+            raise HTTPException(status_code=401, detail="Invalid Google session")
+        google_data = resp.json()
+    except Exception as e:
+        logger.error(f"Google auth error: {e}")
+        raise HTTPException(status_code=401, detail="Google authentication failed")
+
+    email = google_data.get("email")
+    name = google_data.get("name", "")
+    picture = google_data.get("picture", "")
+    if not email:
+        raise HTTPException(status_code=400, detail="Email not provided by Google")
+
+    existing = await db.users.find_one({"email": email}, {"_id": 0})
+    if existing:
+        if picture and not existing.get("avatar"):
+            await db.users.update_one({"id": existing["id"]}, {"$set": {"avatar": picture}})
+        token = create_token(existing["id"])
+        return {"token": token, "user": {
+            "id": existing["id"], "email": existing["email"],
+            "name": existing["name"], "company": existing.get("company", ""),
+            "created_at": existing["created_at"]
+        }}
+
+    user_id = str(uuid.uuid4())
+    now = datetime.now(timezone.utc)
+    trial_end = (now + timedelta(days=7)).isoformat()
+    user_doc = {
+        "id": user_id, "email": email, "password_hash": "",
+        "name": name, "company": "", "avatar": picture,
+        "auth_provider": "google",
+        "subscription": "growth", "subscription_status": "trial",
+        "trial_end": trial_end,
+        "created_at": now.isoformat()
+    }
+    await db.users.insert_one(user_doc)
+    token = create_token(user_id)
+    return {"token": token, "user": {
+        "id": user_id, "email": email, "name": name,
+        "company": "", "created_at": user_doc["created_at"]
+    }}
 
 # ==================== Leads ====================
 @api_router.get("/leads")
@@ -697,16 +758,40 @@ async def get_subscription(user=Depends(get_current_user)):
     full_user = await db.users.find_one({'id': user['id']}, {'_id': 0, 'password_hash': 0})
     sub = full_user.get('subscription', 'free')
     sub_status = full_user.get('subscription_status', 'inactive')
+    trial_end = full_user.get('trial_end')
+
+    # Check if trial expired
+    if sub_status == 'trial' and trial_end:
+        trial_end_dt = datetime.fromisoformat(trial_end)
+        if trial_end_dt.tzinfo is None:
+            trial_end_dt = trial_end_dt.replace(tzinfo=timezone.utc)
+        if trial_end_dt < datetime.now(timezone.utc):
+            await db.users.update_one(
+                {'id': user['id']},
+                {'$set': {'subscription': 'free', 'subscription_status': 'expired'}}
+            )
+            sub = 'free'
+            sub_status = 'expired'
+
     plan_details = SUBSCRIPTION_PLANS.get(sub, None)
-    # Get recent transactions
     txs = await db.payment_transactions.find(
         {'user_id': user['id']}, {'_id': 0}
     ).sort('created_at', -1).limit(5).to_list(5)
+
+    days_remaining = None
+    if sub_status == 'trial' and trial_end:
+        trial_end_dt = datetime.fromisoformat(trial_end)
+        if trial_end_dt.tzinfo is None:
+            trial_end_dt = trial_end_dt.replace(tzinfo=timezone.utc)
+        days_remaining = max(0, (trial_end_dt - datetime.now(timezone.utc)).days)
+
     return {
-        "plan": sub, "status": sub_status,
-        "plan_details": plan_details,
-        "started": full_user.get('subscription_started'),
-        "transactions": txs
+        'plan': sub, 'status': sub_status,
+        'plan_details': plan_details,
+        'started': full_user.get('subscription_started'),
+        'trial_end': trial_end,
+        'days_remaining': days_remaining,
+        'transactions': txs
     }
 
 @app.post("/api/webhook/stripe")

@@ -8,6 +8,12 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // CRITICAL: If returning from OAuth callback, skip the /me check.
+    // AuthCallback will exchange the session_id and establish the session first.
+    if (window.location.hash?.includes('session_id=')) {
+      setLoading(false);
+      return;
+    }
     const token = localStorage.getItem("gosocial_token");
     const stored = localStorage.getItem("gosocial_user");
     if (token && stored) {
@@ -41,6 +47,14 @@ export function AuthProvider({ children }) {
     return res.data;
   }, []);
 
+  const googleAuth = useCallback(async (sessionId) => {
+    const res = await api.post("/auth/google", { session_id: sessionId });
+    localStorage.setItem("gosocial_token", res.data.token);
+    localStorage.setItem("gosocial_user", JSON.stringify(res.data.user));
+    setUser(res.data.user);
+    return res.data;
+  }, []);
+
   const logout = useCallback(() => {
     localStorage.removeItem("gosocial_token");
     localStorage.removeItem("gosocial_user");
@@ -48,7 +62,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, register, googleAuth, logout }}>
       {children}
     </AuthContext.Provider>
   );

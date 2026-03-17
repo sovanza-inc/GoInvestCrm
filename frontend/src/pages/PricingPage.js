@@ -120,7 +120,7 @@ function SuccessView({ sessionId }) {
           Welcome to {SUBSCRIPTION_PLANS_NAMES[planId] || "GoSocial"}!
         </h2>
         <p className="text-sm text-slate-400 mb-8">Your subscription is now active</p>
-        <Button onClick={() => navigate("/")} data-testid="go-to-dashboard-btn"
+        <Button onClick={() => navigate("/dashboard")} data-testid="go-to-dashboard-btn"
           className="bg-blue-600 hover:bg-blue-500 text-white font-bold">
           Go to Dashboard
         </Button>

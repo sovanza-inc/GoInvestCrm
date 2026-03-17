@@ -96,6 +96,14 @@ export default function SettingsPage() {
                 {subscription?.status === 'active' && (
                   <Badge className="ml-2 bg-emerald-500/20 text-emerald-400 border-emerald-500/30 text-[10px]">Active</Badge>
                 )}
+                {subscription?.status === 'trial' && (
+                  <Badge className="ml-2 bg-blue-500/20 text-blue-400 border-blue-500/30 text-[10px]">
+                    Trial - {subscription.days_remaining} days left
+                  </Badge>
+                )}
+                {subscription?.status === 'expired' && (
+                  <Badge className="ml-2 bg-amber-500/20 text-amber-400 border-amber-500/30 text-[10px]">Trial Expired</Badge>
+                )}
               </p>
               {subscription?.started && (
                 <p className="text-xs text-slate-500 mt-1">Since {new Date(subscription.started).toLocaleDateString()}</p>
