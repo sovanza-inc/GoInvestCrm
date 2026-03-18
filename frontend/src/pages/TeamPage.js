@@ -103,64 +103,64 @@ export default function TeamPage() {
     <div className="space-y-6 animate-fade-in">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>
+          <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>
             Team Management
           </h1>
-          <p className="text-sm text-slate-400 mt-1">{members.length} team members</p>
+          <p className="text-sm text-muted-foreground mt-1">{members.length} team members</p>
         </div>
-        <Button onClick={() => setShowInvite(true)} className="bg-blue-600 hover:bg-blue-500 text-white">
+        <Button onClick={() => setShowInvite(true)} className="bg-primary hover:bg-primary/90 text-primary-foreground">
           <UserPlus className="w-4 h-4 mr-2" /> Invite Member
         </Button>
       </div>
 
       {/* Role Descriptions */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="bg-slate-900/50 border-slate-800">
+        <Card className="bg-card border-border">
           <CardContent className="p-4">
             <div className="flex items-center gap-3 mb-2">
               <Crown className="w-5 h-5 text-red-400" />
-              <h3 className="font-bold text-white">Admin</h3>
+              <h3 className="font-bold text-foreground">Admin</h3>
             </div>
-            <p className="text-xs text-slate-400">Full access to all features, can manage team members and settings</p>
+            <p className="text-xs text-muted-foreground">Full access to all features, can manage team members and settings</p>
           </CardContent>
         </Card>
 
-        <Card className="bg-slate-900/50 border-slate-800">
+        <Card className="bg-card border-border">
           <CardContent className="p-4">
             <div className="flex items-center gap-3 mb-2">
               <Shield className="w-5 h-5 text-blue-400" />
-              <h3 className="font-bold text-white">Manager</h3>
+              <h3 className="font-bold text-foreground">Manager</h3>
             </div>
-            <p className="text-xs text-slate-400">Can manage leads, conversations, and view analytics</p>
+            <p className="text-xs text-muted-foreground">Can manage leads, conversations, and view analytics</p>
           </CardContent>
         </Card>
 
-        <Card className="bg-slate-900/50 border-slate-800">
+        <Card className="bg-card border-border">
           <CardContent className="p-4">
             <div className="flex items-center gap-3 mb-2">
               <Users className="w-5 h-5 text-green-400" />
-              <h3 className="font-bold text-white">Agent</h3>
+              <h3 className="font-bold text-foreground">Agent</h3>
             </div>
-            <p className="text-xs text-slate-400">Can manage assigned leads and handle conversations</p>
+            <p className="text-xs text-muted-foreground">Can manage assigned leads and handle conversations</p>
           </CardContent>
         </Card>
       </div>
 
       {/* Team Members Table */}
-      <Card className="bg-slate-900/50 border-slate-800">
+      <Card className="bg-card border-border">
         <CardHeader>
-          <CardTitle className="text-white">Team Members</CardTitle>
-          <CardDescription className="text-slate-400">Manage your team members and their roles</CardDescription>
+          <CardTitle className="text-foreground">Team Members</CardTitle>
+          <CardDescription className="text-muted-foreground">Manage your team members and their roles</CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
-              <TableRow className="border-slate-800 hover:bg-transparent">
-                <TableHead className="text-slate-400 font-bold text-xs uppercase">Member</TableHead>
-                <TableHead className="text-slate-400 font-bold text-xs uppercase">Email</TableHead>
-                <TableHead className="text-slate-400 font-bold text-xs uppercase">Role</TableHead>
-                <TableHead className="text-slate-400 font-bold text-xs uppercase">Joined</TableHead>
-                <TableHead className="text-slate-400 font-bold text-xs uppercase text-right">Actions</TableHead>
+              <TableRow className="border-border hover:bg-transparent">
+                <TableHead className="text-muted-foreground font-bold text-xs uppercase">Member</TableHead>
+                <TableHead className="text-muted-foreground font-bold text-xs uppercase">Email</TableHead>
+                <TableHead className="text-muted-foreground font-bold text-xs uppercase">Role</TableHead>
+                <TableHead className="text-muted-foreground font-bold text-xs uppercase">Joined</TableHead>
+                <TableHead className="text-muted-foreground font-bold text-xs uppercase text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -171,21 +171,21 @@ export default function TeamPage() {
               ) : members.map((member) => {
                 const RoleIcon = ROLE_ICONS[member.role] || Users;
                 return (
-                  <TableRow key={member.id} className="border-slate-800/50 hover:bg-slate-800/30">
+                  <TableRow key={member.id} className="border-border/50 hover:bg-slate-800/30">
                     <TableCell>
                       <div className="flex items-center gap-3">
                         <img src={member.avatar} alt={member.name} className="w-8 h-8 rounded-full bg-slate-700" />
-                        <span className="text-sm font-medium text-slate-200">{member.name}</span>
+                        <span className="text-sm font-medium text-foreground">{member.name}</span>
                       </div>
                     </TableCell>
-                    <TableCell className="text-sm text-slate-300">{member.email}</TableCell>
+                    <TableCell className="text-sm text-foreground">{member.email}</TableCell>
                     <TableCell>
-                      <Badge variant="outline" className={`text-xs ${ROLE_COLORS[member.role] || 'text-slate-400'}`}>
+                      <Badge variant="outline" className={`text-xs ${ROLE_COLORS[member.role] || 'text-muted-foreground'}`}>
                         <RoleIcon className="w-3 h-3 mr-1" />
                         {member.role}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-sm text-slate-400">
+                    <TableCell className="text-sm text-muted-foreground">
                       {member.created_at ? new Date(member.created_at).toLocaleDateString() : 'N/A'}
                     </TableCell>
                     <TableCell className="text-right">
@@ -222,43 +222,43 @@ export default function TeamPage() {
 
       {/* Invite Member Dialog */}
       <Dialog open={showInvite} onOpenChange={setShowInvite}>
-        <DialogContent className="bg-slate-900 border-slate-800 text-slate-200 max-w-md">
+        <DialogContent className="bg-popover border-border text-foreground max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-white">Invite Team Member</DialogTitle>
-            <DialogDescription className="text-slate-400">
+            <DialogTitle className="text-foreground">Invite Team Member</DialogTitle>
+            <DialogDescription className="text-muted-foreground">
               Send an invitation to join your team
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={inviteMember} className="space-y-4">
             <div className="space-y-2">
-              <Label className="text-slate-300">Email *</Label>
+              <Label className="text-foreground">Email *</Label>
               <Input
                 type="email"
                 value={inviteData.email}
                 onChange={(e) => setInviteData({ ...inviteData, email: e.target.value })}
-                className="bg-slate-950/50 border-slate-700 text-slate-200"
+                className="bg-input border-border text-foreground"
                 placeholder="member@company.com"
                 required
               />
             </div>
 
             <div className="space-y-2">
-              <Label className="text-slate-300">Name</Label>
+              <Label className="text-foreground">Name</Label>
               <Input
                 value={inviteData.name}
                 onChange={(e) => setInviteData({ ...inviteData, name: e.target.value })}
-                className="bg-slate-950/50 border-slate-700 text-slate-200"
+                className="bg-input border-border text-foreground"
                 placeholder="John Doe"
               />
             </div>
 
             <div className="space-y-2">
-              <Label className="text-slate-300">Role *</Label>
+              <Label className="text-foreground">Role *</Label>
               <Select value={inviteData.role} onValueChange={(v) => setInviteData({ ...inviteData, role: v })}>
-                <SelectTrigger className="bg-slate-950/50 border-slate-700 text-slate-300">
+                <SelectTrigger className="bg-input border-border text-foreground">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-slate-900 border-slate-700">
+                <SelectContent className="bg-slate-900 border-border">
                   <SelectItem value="agent">Agent - Basic access</SelectItem>
                   <SelectItem value="manager">Manager - Enhanced access</SelectItem>
                   <SelectItem value="admin">Admin - Full access</SelectItem>
@@ -268,8 +268,8 @@ export default function TeamPage() {
 
             <div className="flex gap-2 pt-2">
               <Button type="button" variant="outline" onClick={() => setShowInvite(false)}
-                className="flex-1 border-slate-700 text-slate-300">Cancel</Button>
-              <Button type="submit" className="flex-1 bg-blue-600 hover:bg-blue-500 text-white">
+                className="flex-1 border-border text-foreground">Cancel</Button>
+              <Button type="submit" className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground">
                 Send Invite
               </Button>
             </div>
@@ -279,21 +279,21 @@ export default function TeamPage() {
 
       {/* Edit Role Dialog */}
       <Dialog open={showEditRole} onOpenChange={setShowEditRole}>
-        <DialogContent className="bg-slate-900 border-slate-800 text-slate-200 max-w-md">
+        <DialogContent className="bg-popover border-border text-foreground max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-white">Update Member Role</DialogTitle>
-            <DialogDescription className="text-slate-400">
+            <DialogTitle className="text-foreground">Update Member Role</DialogTitle>
+            <DialogDescription className="text-muted-foreground">
               Change the role for {selectedMember?.name}
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={updateRole} className="space-y-4">
             <div className="space-y-2">
-              <Label className="text-slate-300">New Role</Label>
+              <Label className="text-foreground">New Role</Label>
               <Select value={newRole} onValueChange={setNewRole}>
-                <SelectTrigger className="bg-slate-950/50 border-slate-700 text-slate-300">
+                <SelectTrigger className="bg-input border-border text-foreground">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-slate-900 border-slate-700">
+                <SelectContent className="bg-slate-900 border-border">
                   <SelectItem value="agent">Agent</SelectItem>
                   <SelectItem value="manager">Manager</SelectItem>
                   <SelectItem value="admin">Admin</SelectItem>
@@ -303,8 +303,8 @@ export default function TeamPage() {
 
             <div className="flex gap-2 pt-2">
               <Button type="button" variant="outline" onClick={() => setShowEditRole(false)}
-                className="flex-1 border-slate-700 text-slate-300">Cancel</Button>
-              <Button type="submit" className="flex-1 bg-blue-600 hover:bg-blue-500 text-white">
+                className="flex-1 border-border text-foreground">Cancel</Button>
+              <Button type="submit" className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground">
                 Update Role
               </Button>
             </div>

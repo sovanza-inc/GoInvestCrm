@@ -71,7 +71,7 @@ export default function AnalyticsPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Sales Funnel */}
-        <Card className="bg-slate-900/50 border-slate-800">
+        <Card className="bg-slate-900/50 border-border">
           <CardHeader className="pb-2"><CardTitle className="text-base font-semibold text-white">Sales Funnel</CardTitle></CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={280}>
@@ -88,7 +88,7 @@ export default function AnalyticsPage() {
         </Card>
 
         {/* Platform Distribution */}
-        <Card className="bg-slate-900/50 border-slate-800">
+        <Card className="bg-slate-900/50 border-border">
           <CardHeader className="pb-2"><CardTitle className="text-base font-semibold text-white">Platform Distribution</CardTitle></CardHeader>
           <CardContent className="flex flex-col items-center">
             <ResponsiveContainer width="100%" height={220}>
@@ -112,7 +112,7 @@ export default function AnalyticsPage() {
         </Card>
 
         {/* Monthly Trend */}
-        <Card className="lg:col-span-2 bg-slate-900/50 border-slate-800">
+        <Card className="lg:col-span-2 bg-slate-900/50 border-border">
           <CardHeader className="pb-2"><CardTitle className="text-base font-semibold text-white">Monthly Lead Acquisition</CardTitle></CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={240}>

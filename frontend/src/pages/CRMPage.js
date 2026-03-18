@@ -170,7 +170,7 @@ export default function CRMPage() {
                   )}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-72 bg-slate-900 border-slate-800 p-4" align="end">
+              <PopoverContent className="w-72 bg-slate-900 border-border p-4" align="end">
                 <div className="space-y-4">
                   <div className="flex items-center justify-between mb-2">
                     <h4 className="text-sm font-semibold text-white">Advanced Filters</h4>
@@ -255,7 +255,7 @@ export default function CRMPage() {
         </div>
 
         {/* Chat Panel */}
-        <div className={`flex-1 flex flex-col bg-slate-900/30 rounded-xl border border-slate-800/50 overflow-hidden ${!showMobile && !activeConv ? "hidden lg:flex" : showMobile && activeConv ? "flex" : "hidden lg:flex"}`}>
+        <div className={`flex-1 flex flex-col bg-slate-900/30 rounded-xl border border-border/50 overflow-hidden ${!showMobile && !activeConv ? "hidden lg:flex" : showMobile && activeConv ? "flex" : "hidden lg:flex"}`}>
           {!activeConv ? (
             <div className="flex-1 flex items-center justify-center">
               <p className="text-slate-500 text-sm">Select a conversation to start</p>
@@ -263,7 +263,7 @@ export default function CRMPage() {
           ) : (
             <>
               {/* Chat Header */}
-              <div className="flex items-center gap-3 p-4 border-b border-slate-800/50">
+              <div className="flex items-center gap-3 p-4 border-b border-border/50">
                 <Button variant="ghost" size="icon" className="lg:hidden text-slate-400 h-8 w-8"
                   onClick={() => { setShowMobile(false); setActiveConv(null); }} data-testid="crm-back-btn">
                   <ArrowLeft className="w-4 h-4" />
@@ -302,7 +302,7 @@ export default function CRMPage() {
               )}
 
               {/* Input */}
-              <form onSubmit={sendMessage} className="p-3 border-t border-slate-800/50 flex gap-2">
+              <form onSubmit={sendMessage} className="p-3 border-t border-border/50 flex gap-2">
                 <Button type="button" variant="ghost" size="icon"
                   className="shrink-0 text-violet-400 hover:text-violet-300 hover:bg-violet-500/10 h-10 w-10"
                   onClick={getAiSuggestions} disabled={aiLoading}

@@ -98,7 +98,7 @@ export default function ProfilePage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-slate-400">Loading profile...</div>
+        <div className="text-muted-foreground">Loading profile...</div>
       </div>
     );
   }
@@ -106,51 +106,51 @@ export default function ProfilePage() {
   return (
     <div className="space-y-6 animate-fade-in max-w-4xl">
       <div>
-        <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>
+        <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>
           Profile Settings
         </h1>
-        <p className="text-sm text-slate-400 mt-1">Manage your account settings and preferences</p>
+        <p className="text-sm text-muted-foreground mt-1">Manage your account settings and preferences</p>
       </div>
 
       {/* Statistics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="bg-slate-900/50 border-slate-800">
+        <Card className="bg-card border-border">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-blue-600/20 rounded-lg">
                 <Users className="w-5 h-5 text-blue-400" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-white">{profile?.statistics?.leads_count || 0}</p>
-                <p className="text-xs text-slate-400">Total Leads</p>
+                <p className="text-2xl font-bold text-foreground">{profile?.statistics?.leads_count || 0}</p>
+                <p className="text-xs text-muted-foreground">Total Leads</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-slate-900/50 border-slate-800">
+        <Card className="bg-card border-border">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-emerald-600/20 rounded-lg">
                 <TrendingUp className="w-5 h-5 text-emerald-400" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-white">{profile?.statistics?.conversations_count || 0}</p>
-                <p className="text-xs text-slate-400">Conversations</p>
+                <p className="text-2xl font-bold text-foreground">{profile?.statistics?.conversations_count || 0}</p>
+                <p className="text-xs text-muted-foreground">Conversations</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-slate-900/50 border-slate-800">
+        <Card className="bg-card border-border">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-violet-600/20 rounded-lg">
                 <Users className="w-5 h-5 text-violet-400" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-white">{profile?.statistics?.team_size || 1}</p>
-                <p className="text-xs text-slate-400">Team Members</p>
+                <p className="text-2xl font-bold text-foreground">{profile?.statistics?.team_size || 1}</p>
+                <p className="text-xs text-muted-foreground">Team Members</p>
               </div>
             </div>
           </CardContent>
@@ -158,68 +158,68 @@ export default function ProfilePage() {
       </div>
 
       {/* Profile Information */}
-      <Card className="bg-slate-900/50 border-slate-800">
+      <Card className="bg-card border-border">
         <CardHeader>
-          <CardTitle className="text-white">Profile Information</CardTitle>
-          <CardDescription className="text-slate-400">Update your personal details</CardDescription>
+          <CardTitle className="text-foreground">Profile Information</CardTitle>
+          <CardDescription className="text-muted-foreground">Update your personal details</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={updateProfile} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label className="text-slate-300 flex items-center gap-2">
+                <Label className="text-foreground flex items-center gap-2">
                   <User className="w-4 h-4" /> Full Name
                 </Label>
                 <Input
                   value={profileData.name}
                   onChange={(e) => setProfileData({ ...profileData, name: e.target.value })}
-                  className="bg-slate-950/50 border-slate-700 text-slate-200"
+                  className="bg-input border-border text-foreground"
                   required
                 />
               </div>
 
               <div className="space-y-2">
-                <Label className="text-slate-300 flex items-center gap-2">
+                <Label className="text-foreground flex items-center gap-2">
                   <Mail className="w-4 h-4" /> Email
                 </Label>
                 <Input
                   value={profile?.email}
                   disabled
-                  className="bg-slate-950/50 border-slate-700 text-slate-400"
+                  className="bg-input border-border text-muted-foreground"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label className="text-slate-300 flex items-center gap-2">
+                <Label className="text-foreground flex items-center gap-2">
                   <Building className="w-4 h-4" /> Company
                 </Label>
                 <Input
                   value={profileData.company}
                   onChange={(e) => setProfileData({ ...profileData, company: e.target.value })}
-                  className="bg-slate-950/50 border-slate-700 text-slate-200"
+                  className="bg-input border-border text-foreground"
                   placeholder="Your company name"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label className="text-slate-300 flex items-center gap-2">
+                <Label className="text-foreground flex items-center gap-2">
                   <Phone className="w-4 h-4" /> Phone
                 </Label>
                 <Input
                   value={profileData.phone}
                   onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })}
-                  className="bg-slate-950/50 border-slate-700 text-slate-200"
+                  className="bg-input border-border text-foreground"
                   placeholder="+1 (555) 123-4567"
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label className="text-slate-300">Bio</Label>
+              <Label className="text-foreground">Bio</Label>
               <Textarea
                 value={profileData.bio}
                 onChange={(e) => setProfileData({ ...profileData, bio: e.target.value })}
-                className="bg-slate-950/50 border-slate-700 text-slate-200 h-24"
+                className="bg-input border-border text-foreground h-24"
                 placeholder="Tell us about yourself..."
               />
             </div>
@@ -235,7 +235,7 @@ export default function ProfilePage() {
               )}
             </div>
 
-            <Button type="submit" disabled={updating} className="bg-blue-600 hover:bg-blue-500 text-white">
+            <Button type="submit" disabled={updating} className="bg-primary hover:bg-primary/90 text-primary-foreground">
               {updating ? "Updating..." : "Update Profile"}
             </Button>
           </form>
@@ -243,46 +243,46 @@ export default function ProfilePage() {
       </Card>
 
       {/* Change Password */}
-      <Card className="bg-slate-900/50 border-slate-800">
+      <Card className="bg-card border-border">
         <CardHeader>
-          <CardTitle className="text-white flex items-center gap-2">
+          <CardTitle className="text-foreground flex items-center gap-2">
             <Lock className="w-5 h-5" /> Change Password
           </CardTitle>
-          <CardDescription className="text-slate-400">Update your password to keep your account secure</CardDescription>
+          <CardDescription className="text-muted-foreground">Update your password to keep your account secure</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={changePassword} className="space-y-4">
             <div className="space-y-2">
-              <Label className="text-slate-300">Current Password</Label>
+              <Label className="text-foreground">Current Password</Label>
               <Input
                 type="password"
                 value={passwordData.current_password}
                 onChange={(e) => setPasswordData({ ...passwordData, current_password: e.target.value })}
-                className="bg-slate-950/50 border-slate-700 text-slate-200"
+                className="bg-input border-border text-foreground"
                 required
               />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label className="text-slate-300">New Password</Label>
+                <Label className="text-foreground">New Password</Label>
                 <Input
                   type="password"
                   value={passwordData.new_password}
                   onChange={(e) => setPasswordData({ ...passwordData, new_password: e.target.value })}
-                  className="bg-slate-950/50 border-slate-700 text-slate-200"
+                  className="bg-input border-border text-foreground"
                   minLength={6}
                   required
                 />
               </div>
 
               <div className="space-y-2">
-                <Label className="text-slate-300">Confirm New Password</Label>
+                <Label className="text-foreground">Confirm New Password</Label>
                 <Input
                   type="password"
                   value={passwordData.confirm_password}
                   onChange={(e) => setPasswordData({ ...passwordData, confirm_password: e.target.value })}
-                  className="bg-slate-950/50 border-slate-700 text-slate-200"
+                  className="bg-input border-border text-foreground"
                   minLength={6}
                   required
                 />
