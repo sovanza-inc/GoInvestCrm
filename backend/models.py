@@ -72,3 +72,12 @@ class CheckoutRequest(BaseModel):
 
 class GoogleAuthRequest(BaseModel):
     session_id: str
+
+
+class BulkUpdateLeads(BaseModel):
+    lead_ids: List[str]
+    updates: dict
+
+
+class BulkDeleteLeads(BaseModel):
+    lead_ids: List[str]

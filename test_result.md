@@ -101,3 +101,227 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: "Implement top 5 high-impact features for GoSocial: 1) Bulk Actions, 2) Team Collaboration, 3) Automated Outreach, 4) WhatsApp Integration, 5) Instagram DM Integration"
+
+backend:
+  - task: "Bulk Import Leads (CSV)"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/leads.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added POST /api/leads/bulk-import endpoint. Accepts CSV file, validates data, handles duplicates, returns import summary with imported/skipped counts and errors."
+      - working: true
+        agent: "testing"
+        comment: "TESTED ✅ - CSV import working correctly. Successfully imported leads from sample CSV file with duplicate detection. Imported 2 new leads, skipped 2 duplicates. Proper validation of required fields (name, handle). Error handling working for malformed data."
+  
+  - task: "Bulk Export Leads (CSV)"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/leads.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added POST /api/leads/bulk-export endpoint. Generates CSV file from all user leads with proper formatting and downloads as attachment."
+      - working: true
+        agent: "testing"
+        comment: "TESTED ✅ - CSV export working perfectly. Returns proper CSV file with correct Content-Type (text/csv) and Content-Disposition headers. Contains all expected fields: name, handle, platform, bio, followers, engagement_rate, score, status, tags, notes, created_at."
+  
+  - task: "Bulk Update Leads"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/leads.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added POST /api/leads/bulk-update endpoint. Accepts array of lead IDs and update data (status, tags), validates permissions, performs bulk update."
+      - working: true
+        agent: "testing"
+        comment: "TESTED ✅ - Bulk update working correctly. Successfully updated multiple leads with new status and tags. Proper validation: rejects empty lead_ids array, rejects empty updates object. Permission validation ensures users only update their own leads. Updates verified in database."
+  
+  - task: "Bulk Delete Leads"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/leads.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added POST /api/leads/bulk-delete endpoint. Accepts array of lead IDs, validates ownership, deletes leads in bulk."
+      - working: true
+        agent: "testing"
+        comment: "TESTED ✅ - Bulk delete working correctly. Successfully deleted leads in bulk operation. Proper validation: rejects empty lead_ids array. Permission validation ensures users only delete their own leads. Deletion verified with 404 responses for deleted lead IDs."
+
+frontend:
+  - task: "Bulk Selection UI"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/LeadsPage.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added checkboxes to leads table for selecting individual leads and select-all functionality. Shows selected count in header."
+  
+  - task: "Bulk Actions Toolbar"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/LeadsPage.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added toolbar that appears when leads are selected. Shows Update and Delete buttons, with selected count and clear action."
+  
+  - task: "Import/Export Buttons"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/LeadsPage.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added Import and Export buttons in the header. Export triggers immediate CSV download. Import opens modal dialog."
+  
+  - task: "Import CSV Dialog"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/LeadsPage.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Created import dialog with file upload input, instructions, and progress feedback. Shows import results (imported/skipped counts)."
+  
+  - task: "Bulk Update Dialog"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/LeadsPage.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Created bulk update dialog allowing users to change status and add tags to multiple leads at once. Shows confirmation message."
+  
+  - task: "Bulk Delete Dialog"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/LeadsPage.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Created bulk delete confirmation dialog with warning message. Requires explicit confirmation before deletion."
+
+metadata:
+  created_by: "main_agent"
+  version: "1.0"
+  test_sequence: 0
+  run_ui: false
+
+test_plan:
+  current_focus:
+    - "Bulk Import Leads (CSV)"
+    - "Bulk Export Leads (CSV)"
+    - "Bulk Update Leads"
+    - "Bulk Delete Leads"
+    - "All Frontend Bulk Actions"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+  - agent: "main"
+    message: |
+      FEATURE #1 COMPLETE: Bulk Actions
+      
+      Backend Implementation:
+      - Added 4 new API endpoints for bulk operations
+      - POST /api/leads/bulk-import - CSV upload with validation and duplicate detection
+      - POST /api/leads/bulk-export - Generate and download CSV
+      - POST /api/leads/bulk-update - Update multiple leads (status, tags)
+      - POST /api/leads/bulk-delete - Delete multiple leads
+      - Created BulkUpdateLeads and BulkDeleteLeads Pydantic models
+      
+      Frontend Implementation:
+      - Added checkbox column to leads table for selection
+      - Select all functionality in table header
+      - Bulk actions toolbar appears when leads are selected
+      - Import/Export buttons in page header
+      - 4 new modal dialogs: Import, Export, Bulk Update, Bulk Delete
+      - Real-time feedback with toast notifications
+      - CSV sample file created at /app/sample_leads_import.csv
+      
+      Key Features:
+      - Duplicate detection during import
+      - Error reporting with detailed messages
+      - Permission validation (users can only modify their own leads)
+      - Responsive UI with loading states
+      - Clear visual feedback for all actions
+      
+      Ready for testing! Please test:
+      1. CSV import with sample file
+      2. CSV export functionality
+      3. Selecting multiple leads and updating status/tags
+      4. Bulk delete with confirmation
+      5. Error handling for invalid CSV files
+  
+  - agent: "testing"
+    message: |
+      BACKEND BULK ACTIONS TESTING COMPLETE ✅
+      
+      Comprehensive testing performed on all 4 bulk action endpoints:
+      
+      ✅ POST /api/leads/bulk-import:
+      - Successfully imports leads from CSV file
+      - Proper duplicate detection (skips existing handles)
+      - Validates required fields (name, handle)
+      - Returns detailed import summary with counts and errors
+      - Handles malformed CSV data gracefully
+      
+      ✅ POST /api/leads/bulk-export:
+      - Generates proper CSV file with all lead data
+      - Correct Content-Type: text/csv and attachment headers
+      - Includes all fields: name, handle, platform, bio, followers, engagement_rate, score, status, tags, notes, created_at
+      
+      ✅ POST /api/leads/bulk-update:
+      - Successfully updates multiple leads in single operation
+      - Updates status and tags as specified
+      - Proper validation: rejects empty lead_ids and empty updates
+      - Permission validation: users can only update their own leads
+      - Database updates confirmed by individual lead retrieval
+      
+      ✅ POST /api/leads/bulk-delete:
+      - Successfully deletes multiple leads in single operation
+      - Proper validation: rejects empty lead_ids array
+      - Permission validation: users can only delete their own leads
+      - Deletion confirmed by 404 responses for deleted lead IDs
+      
+      🔒 Authentication: All endpoints properly require valid JWT tokens
+      
+      All backend bulk actions are working correctly and ready for production use.

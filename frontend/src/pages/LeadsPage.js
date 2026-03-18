@@ -6,10 +6,11 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Search, Plus, Sparkles, Trash2, ExternalLink } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Search, Plus, Sparkles, Trash2, Upload, Download, Edit, X } from "lucide-react";
 import { toast } from "sonner";
 
 const STATUS_COLORS = { new: "bg-slate-600", contacted: "bg-blue-600", qualified: "bg-emerald-600", negotiation: "bg-amber-600", closed: "bg-green-600", lost: "bg-red-600" };
@@ -26,6 +27,15 @@ export default function LeadsPage() {
   const [showAdd, setShowAdd] = useState(false);
   const [scoring, setScoring] = useState(null);
   const [newLead, setNewLead] = useState({ name: "", handle: "", platform: "instagram", bio: "", followers: 0, engagement_rate: 0, tags: "", notes: "" });
+  
+  // Bulk actions state
+  const [selectedLeads, setSelectedLeads] = useState([]);
+  const [showImport, setShowImport] = useState(false);
+  const [showBulkUpdate, setShowBulkUpdate] = useState(false);
+  const [showBulkDelete, setShowBulkDelete] = useState(false);
+  const [importFile, setImportFile] = useState(null);
+  const [importing, setImporting] = useState(false);
+  const [bulkUpdateData, setBulkUpdateData] = useState({ status: "", tags: "" });
 
   const fetchLeads = useCallback(async () => {
     setLoading(true);
@@ -68,18 +78,171 @@ export default function LeadsPage() {
     finally { setScoring(null); }
   };
 
+  // Bulk selection handlers
+  const toggleSelectAll = () => {
+    if (selectedLeads.length === leads.length) {
+      setSelectedLeads([]);
+    } else {
+      setSelectedLeads(leads.map(l => l.id));
+    }
+  };
+
+  const toggleSelectLead = (id) => {
+    setSelectedLeads(prev => 
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
+  };
+
+  // Bulk import
+  const handleImport = async (e) => {
+    e.preventDefault();
+    if (!importFile) {
+      toast.error("Please select a CSV file");
+      return;
+    }
+
+    setImporting(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", importFile);
+      
+      const res = await api.post("/leads/bulk-import", formData, {
+        headers: { "Content-Type": "multipart/form-data" }
+      });
+
+      toast.success(`Import complete! Imported: ${res.data.imported}, Skipped: ${res.data.skipped}`);
+      if (res.data.errors.length > 0) {
+        console.log("Import errors:", res.data.errors);
+      }
+      
+      setShowImport(false);
+      setImportFile(null);
+      fetchLeads();
+    } catch (err) {
+      toast.error(err.response?.data?.detail || "Import failed");
+    } finally {
+      setImporting(false);
+    }
+  };
+
+  // Bulk export
+  const handleExport = async () => {
+    try {
+      const response = await api.post("/leads/bulk-export", {}, { responseType: 'blob' });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `leads_export_${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      toast.success("Leads exported successfully");
+    } catch (err) {
+      toast.error("Export failed");
+    }
+  };
+
+  // Bulk update
+  const handleBulkUpdate = async (e) => {
+    e.preventDefault();
+    if (selectedLeads.length === 0) {
+      toast.error("No leads selected");
+      return;
+    }
+
+    const updates = {};
+    if (bulkUpdateData.status) updates.status = bulkUpdateData.status;
+    if (bulkUpdateData.tags) updates.tags = bulkUpdateData.tags.split(',').map(t => t.trim()).filter(Boolean);
+
+    if (Object.keys(updates).length === 0) {
+      toast.error("No updates specified");
+      return;
+    }
+
+    try {
+      const res = await api.post("/leads/bulk-update", {
+        lead_ids: selectedLeads,
+        updates
+      });
+      
+      toast.success(res.data.message);
+      setShowBulkUpdate(false);
+      setBulkUpdateData({ status: "", tags: "" });
+      setSelectedLeads([]);
+      fetchLeads();
+    } catch (err) {
+      toast.error("Bulk update failed");
+    }
+  };
+
+  // Bulk delete
+  const handleBulkDelete = async () => {
+    if (selectedLeads.length === 0) {
+      toast.error("No leads selected");
+      return;
+    }
+
+    try {
+      const res = await api.post("/leads/bulk-delete", {
+        lead_ids: selectedLeads
+      });
+      
+      toast.success(res.data.message);
+      setShowBulkDelete(false);
+      setSelectedLeads([]);
+      fetchLeads();
+    } catch (err) {
+      toast.error("Bulk delete failed");
+    }
+  };
+
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>Leads</h1>
-          <p className="text-sm text-slate-400 mt-1">{total} total leads</p>
+          <p className="text-sm text-slate-400 mt-1">{total} total leads {selectedLeads.length > 0 && `• ${selectedLeads.length} selected`}</p>
         </div>
-        <Button onClick={() => setShowAdd(true)} data-testid="add-lead-btn"
-          className="bg-blue-600 hover:bg-blue-500 text-white font-bold">
-          <Plus className="w-4 h-4 mr-2" /> Add Lead
-        </Button>
+        <div className="flex gap-2">
+          <Button onClick={() => setShowImport(true)} variant="outline"
+            className="border-slate-700 text-slate-300 hover:bg-slate-800">
+            <Upload className="w-4 h-4 mr-2" /> Import
+          </Button>
+          <Button onClick={handleExport} variant="outline"
+            className="border-slate-700 text-slate-300 hover:bg-slate-800">
+            <Download className="w-4 h-4 mr-2" /> Export
+          </Button>
+          <Button onClick={() => setShowAdd(true)} data-testid="add-lead-btn"
+            className="bg-blue-600 hover:bg-blue-500 text-white font-bold">
+            <Plus className="w-4 h-4 mr-2" /> Add Lead
+          </Button>
+        </div>
       </div>
+
+      {/* Bulk Actions Toolbar */}
+      {selectedLeads.length > 0 && (
+        <Card className="bg-blue-900/20 border-blue-800">
+          <CardContent className="p-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-blue-300 font-medium">{selectedLeads.length} leads selected</span>
+              <Button size="sm" variant="ghost" onClick={() => setSelectedLeads([])}
+                className="text-slate-400 hover:text-white h-7">
+                <X className="w-3 h-3 mr-1" /> Clear
+              </Button>
+            </div>
+            <div className="flex gap-2">
+              <Button size="sm" onClick={() => setShowBulkUpdate(true)}
+                className="bg-amber-600 hover:bg-amber-500 text-white h-8">
+                <Edit className="w-3 h-3 mr-1" /> Update
+              </Button>
+              <Button size="sm" onClick={() => setShowBulkDelete(true)}
+                className="bg-red-600 hover:bg-red-500 text-white h-8">
+                <Trash2 className="w-3 h-3 mr-1" /> Delete
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Filters */}
       <Card className="bg-slate-900/50 border-slate-800">
@@ -121,6 +284,13 @@ export default function LeadsPage() {
           <Table data-testid="leads-table">
             <TableHeader>
               <TableRow className="border-slate-800 hover:bg-transparent">
+                <TableHead className="w-12">
+                  <Checkbox 
+                    checked={selectedLeads.length === leads.length && leads.length > 0}
+                    onCheckedChange={toggleSelectAll}
+                    className="border-slate-600"
+                  />
+                </TableHead>
                 <TableHead className="text-slate-400 font-bold text-xs uppercase">Lead</TableHead>
                 <TableHead className="text-slate-400 font-bold text-xs uppercase">Platform</TableHead>
                 <TableHead className="text-slate-400 font-bold text-xs uppercase">Score</TableHead>
@@ -132,11 +302,18 @@ export default function LeadsPage() {
             </TableHeader>
             <TableBody>
               {loading ? (
-                <TableRow><TableCell colSpan={7} className="text-center py-8 text-slate-500">Loading...</TableCell></TableRow>
+                <TableRow><TableCell colSpan={8} className="text-center py-8 text-slate-500">Loading...</TableCell></TableRow>
               ) : leads.length === 0 ? (
-                <TableRow><TableCell colSpan={7} className="text-center py-8 text-slate-500">No leads found</TableCell></TableRow>
+                <TableRow><TableCell colSpan={8} className="text-center py-8 text-slate-500">No leads found</TableCell></TableRow>
               ) : leads.map((lead) => (
                 <TableRow key={lead.id} data-testid={`lead-row-${lead.id}`} className="border-slate-800/50 hover:bg-slate-800/30">
+                  <TableCell>
+                    <Checkbox 
+                      checked={selectedLeads.includes(lead.id)}
+                      onCheckedChange={() => toggleSelectLead(lead.id)}
+                      className="border-slate-600"
+                    />
+                  </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-3">
                       <img src={lead.avatar} alt={lead.name} className="w-8 h-8 rounded-full bg-slate-700" />
@@ -217,6 +394,106 @@ export default function LeadsPage() {
               <Input className="bg-slate-950/50 border-slate-700 text-slate-200" value={newLead.tags} onChange={e => setNewLead({...newLead, tags: e.target.value})} placeholder="interested, high-value" /></div>
             <Button type="submit" data-testid="submit-lead-btn" className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold">Add Lead</Button>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Import Dialog */}
+      <Dialog open={showImport} onOpenChange={setShowImport}>
+        <DialogContent className="bg-slate-900 border-slate-800 text-slate-200 max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-white">Import Leads from CSV</DialogTitle>
+            <DialogDescription className="text-slate-400 text-sm">
+              Upload a CSV file with columns: name, handle, platform, bio, followers, engagement_rate, tags, notes, status
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleImport} className="space-y-4">
+            <div className="space-y-2">
+              <Label className="text-slate-400 text-xs">CSV File</Label>
+              <Input 
+                type="file" 
+                accept=".csv"
+                onChange={(e) => setImportFile(e.target.files[0])}
+                className="bg-slate-950/50 border-slate-700 text-slate-200 cursor-pointer"
+                required
+              />
+              <p className="text-xs text-slate-500">Duplicates will be skipped automatically</p>
+            </div>
+            <div className="flex gap-2">
+              <Button type="button" variant="outline" onClick={() => setShowImport(false)}
+                className="flex-1 border-slate-700 text-slate-300">Cancel</Button>
+              <Button type="submit" disabled={importing}
+                className="flex-1 bg-blue-600 hover:bg-blue-500 text-white">
+                {importing ? "Importing..." : "Import Leads"}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Bulk Update Dialog */}
+      <Dialog open={showBulkUpdate} onOpenChange={setShowBulkUpdate}>
+        <DialogContent className="bg-slate-900 border-slate-800 text-slate-200 max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-white">Update {selectedLeads.length} Leads</DialogTitle>
+            <DialogDescription className="text-slate-400 text-sm">
+              Changes will be applied to all selected leads
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleBulkUpdate} className="space-y-4">
+            <div className="space-y-2">
+              <Label className="text-slate-400 text-xs">Update Status</Label>
+              <Select value={bulkUpdateData.status} onValueChange={v => setBulkUpdateData({...bulkUpdateData, status: v})}>
+                <SelectTrigger className="bg-slate-950/50 border-slate-700 text-slate-300">
+                  <SelectValue placeholder="Select status" />
+                </SelectTrigger>
+                <SelectContent className="bg-slate-900 border-slate-700">
+                  <SelectItem value="new">New</SelectItem>
+                  <SelectItem value="contacted">Contacted</SelectItem>
+                  <SelectItem value="qualified">Qualified</SelectItem>
+                  <SelectItem value="negotiation">Negotiation</SelectItem>
+                  <SelectItem value="closed">Closed</SelectItem>
+                  <SelectItem value="lost">Lost</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label className="text-slate-400 text-xs">Add Tags (comma separated)</Label>
+              <Input 
+                className="bg-slate-950/50 border-slate-700 text-slate-200"
+                placeholder="bulk-2024, campaign-q1"
+                value={bulkUpdateData.tags}
+                onChange={e => setBulkUpdateData({...bulkUpdateData, tags: e.target.value})}
+              />
+              <p className="text-xs text-slate-500">These tags will be added to existing tags</p>
+            </div>
+            <div className="flex gap-2">
+              <Button type="button" variant="outline" onClick={() => setShowBulkUpdate(false)}
+                className="flex-1 border-slate-700 text-slate-300">Cancel</Button>
+              <Button type="submit" className="flex-1 bg-amber-600 hover:bg-amber-500 text-white">
+                Update Leads
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Bulk Delete Dialog */}
+      <Dialog open={showBulkDelete} onOpenChange={setShowBulkDelete}>
+        <DialogContent className="bg-slate-900 border-slate-800 text-slate-200 max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-white">Delete {selectedLeads.length} Leads?</DialogTitle>
+            <DialogDescription className="text-slate-400 text-sm">
+              This action cannot be undone. All selected leads will be permanently deleted.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex gap-2 mt-4">
+            <Button variant="outline" onClick={() => setShowBulkDelete(false)}
+              className="flex-1 border-slate-700 text-slate-300">Cancel</Button>
+            <Button onClick={handleBulkDelete}
+              className="flex-1 bg-red-600 hover:bg-red-500 text-white">
+              Delete Leads
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
