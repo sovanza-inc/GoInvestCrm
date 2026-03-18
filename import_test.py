@@ -4,7 +4,7 @@ Test CSV import functionality
 """
 import requests
 
-base_url = "https://scan-and-run.preview.emergentagent.com"
+base_url = "https://sales-autopilot-21.preview.emergentagent.com"
 
 # Login to get token
 login_data = {"email": "sarah.chen@marketingpro.com", "password": "SecurePass123!"}
