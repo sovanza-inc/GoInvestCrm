@@ -4,9 +4,9 @@
 Build a web-based SaaS platform called "GoSocial" to help entrepreneurs and content creators convert their social media followers into paying customers.
 
 ## Tech Stack
-- **Frontend:** React, Tailwind CSS, shadcn/ui, Recharts
+- **Frontend:** React 19, Tailwind CSS, shadcn/ui, Recharts
 - **Backend:** FastAPI (Python), modular route architecture
-- **Database:** MongoDB
+- **Database:** MongoDB (Motor async driver)
 - **AI:** OpenAI GPT-5.2 via Emergent LLM Key
 - **Auth:** JWT + Google OAuth (Emergent-managed)
 - **Payments:** Stripe
@@ -14,7 +14,7 @@ Build a web-based SaaS platform called "GoSocial" to help entrepreneurs and cont
 ## Architecture
 ```
 /app/backend/
-├── server.py              # App entry, middleware, startup (~70 lines)
+├── server.py              # App entry, middleware, startup
 ├── config.py              # Env vars, constants
 ├── database.py            # MongoDB connection
 ├── models.py              # Pydantic models
@@ -28,10 +28,42 @@ Build a web-based SaaS platform called "GoSocial" to help entrepreneurs and cont
 │   ├── templates.py       # /api/templates/*
 │   ├── settings.py        # /api/settings/*
 │   ├── billing.py         # /api/billing/*
-│   └── seed.py            # /api/seed-data
+│   ├── seed.py            # /api/seed-data
+│   ├── profile.py         # /api/profile/*
+│   ├── team.py            # /api/team/*
+│   ├── autopilot.py       # /api/autopilot/* (NEW)
+│   └── integrations.py    # /api/integrations/* (NEW)
+
+/app/frontend/src/
+├── pages/
+│   ├── AutopilotPage.js     (NEW)
+│   ├── IntegrationsPage.js  (NEW)
+│   ├── DashboardPage.js
+│   ├── LeadsPage.js
+│   ├── CRMPage.js
+│   ├── AnalyticsPage.js
+│   ├── TemplatesPage.js
+│   ├── ProfilePage.js
+│   ├── TeamPage.js
+│   ├── SettingsPage.js
+│   ├── PricingPage.js
+│   ├── LoginPage.js
+│   └── LandingPage.js
+├── contexts/
+│   ├── AuthContext.js
+│   └── ThemeContext.js
+├── lib/
+│   ├── api.js
+│   ├── colors.js
+│   └── utils.js
+├── components/
+│   ├── Layout.js
+│   └── ui/ (shadcn components)
 ```
 
-## Completed Features (MVP Phase 1)
+## Completed Features
+
+### MVP Phase 1
 - [x] JWT auth (register/login) with 7-day Growth trial
 - [x] Google OAuth social login
 - [x] Lead management (CRUD, scoring, filtering, tagging)
@@ -41,32 +73,43 @@ Build a web-based SaaS platform called "GoSocial" to help entrepreneurs and cont
 - [x] Analytics dashboard (overview, pipeline)
 - [x] Message templates (CRUD)
 - [x] Stripe subscription billing (3 tiers)
-- [x] Landing page - REVE Chat style with all sections:
-  - Hero with CTA + star rating
-  - Product screenshot in browser frame
-  - Trust bar with platform logos
-  - "Transforming businesses" stats section with tabbed cards
-  - AI Sales Copilot bento grid (6 cards)
-  - Unified Smart CRM bento grid
-  - "Everything you need" tabbed features with live mockups
-  - Pricing cards (3 tiers)
-  - "Step into the era" final CTA
-  - Multi-column footer (Products, Channels, Solutions, GoSocial, Resources)
-- [x] Backend refactored to modular architecture
+- [x] Landing page (REVE Chat style)
+- [x] Backend modular architecture
 
-## Upcoming Tasks (Phase 2 - P0)
-- [ ] Team Collaboration - multi-user roles/permissions
-- [ ] Advanced AI Coaching - real AI conversation scoring
-- [ ] Automated Outreach (Autopilot) - target criteria + auto DMs
+### Phase 2 - Completed
+- [x] Bulk Lead Actions (CSV import/export, bulk update/delete)
+- [x] Profile page (personal/company info, password change)
+- [x] Team Management (invite, roles: Admin/Manager/Agent, lead assignment)
+- [x] Enhanced CRM Filters (platform, status, assignment, date, sort)
+- [x] Global Dark/Light Theme (ChatGPT-inspired, persistent)
+- [x] Automated Outreach (Autopilot) - campaign CRUD, targeting, A/B steps, simulate, analytics
+- [x] WhatsApp Integration (SIMULATED) - connect, inbox, messaging with auto-replies
+- [x] Instagram DM Integration (SIMULATED) - connect, inbox, messaging with auto-replies
+
+## Upcoming Tasks (P1)
+- [ ] Team Collaboration Enhancements - activity log, team performance dashboard
 - [ ] Voice/Video Messaging in CRM
 - [ ] LinkedIn Integration
 
-## Future Tasks (Phase 3 - P1)
+## Future Tasks (P2)
 - [ ] Custom AI fine-tuning per user
 - [ ] Advanced lead segmentation
 - [ ] Predictive analytics
 - [ ] Mobile application
+- [ ] Real WhatsApp Business API integration (requires Meta API keys)
+- [ ] Real Instagram DM API integration (requires Meta API keys)
 
-## Mocked Features
+## Key API Endpoints (New)
+- **Autopilot**: `GET/POST /api/autopilot/campaigns`, `GET/PUT/DELETE /api/autopilot/campaigns/{id}`, `PUT /api/autopilot/campaigns/{id}/toggle`, `POST /api/autopilot/campaigns/{id}/simulate`, `GET /api/autopilot/campaigns/{id}/analytics`
+- **Integrations**: `GET /api/integrations`, `POST /api/integrations/connect`, `DELETE /api/integrations/{id}`, `GET /api/integrations/{platform}/conversations`, `GET /api/integrations/{platform}/conversations/{id}`, `POST /api/integrations/{platform}/conversations/{id}/send`, `POST /api/integrations/{platform}/seed-demo`
+
+## Mocked/Simulated Features
 - AI features fall back to mocked responses when LLM key budget is low
-- Social media API integrations are simulated
+- WhatsApp integration is SIMULATED (auto-generates replies, not connected to real WhatsApp Business API)
+- Instagram DM integration is SIMULATED (auto-generates replies, not connected to real Instagram API)
+
+## Design System
+- Theme: Centralized in `/frontend/src/lib/colors.js` and `/frontend/src/index.css`
+- All UI uses semantic CSS variables (bg-card, text-foreground, etc.)
+- Dark mode: ChatGPT-inspired colors
+- ThemeContext manages dark/light toggle with localStorage persistence
