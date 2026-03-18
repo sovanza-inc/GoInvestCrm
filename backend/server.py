@@ -15,6 +15,8 @@ from routes.templates import router as templates_router
 from routes.settings import router as settings_router
 from routes.billing import router as billing_router, handle_stripe_webhook
 from routes.seed import router as seed_router
+from routes.profile import router as profile_router
+from routes.team import router as team_router
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -32,6 +34,8 @@ api_router.include_router(templates_router)
 api_router.include_router(settings_router)
 api_router.include_router(billing_router)
 api_router.include_router(seed_router)
+api_router.include_router(profile_router)
+api_router.include_router(team_router)
 
 
 @api_router.get("/")
@@ -57,9 +61,12 @@ app.add_middleware(
 async def startup():
     await db.users.create_index('email', unique=True)
     await db.users.create_index('id', unique=True)
+    await db.users.create_index('team_id')
     await db.leads.create_index([('user_id', 1), ('status', 1)])
     await db.leads.create_index([('user_id', 1), ('score', -1)])
+    await db.leads.create_index([('user_id', 1), ('assigned_to', 1)])
     await db.conversations.create_index([('user_id', 1), ('last_message_at', -1)])
+    await db.conversations.create_index([('user_id', 1), ('assigned_to', 1)])
     await db.messages.create_index('conversation_id')
     logger.info("GoSocial API started, indexes created")
 

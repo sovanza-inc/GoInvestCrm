@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Outlet, NavLink, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Users, MessageSquare, BarChart3, FileText, Settings, LogOut, Menu, X, Zap, CreditCard } from "lucide-react";
+import { LayoutDashboard, Users, MessageSquare, BarChart3, FileText, Settings, LogOut, Menu, X, Zap, CreditCard, User, UsersRound } from "lucide-react";
 
 const navItems = [
   { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
@@ -10,6 +10,8 @@ const navItems = [
   { to: "/crm", icon: MessageSquare, label: "CRM Inbox" },
   { to: "/analytics", icon: BarChart3, label: "Analytics" },
   { to: "/templates", icon: FileText, label: "Templates" },
+  { to: "/team", icon: UsersRound, label: "Team" },
+  { to: "/profile", icon: User, label: "Profile" },
   { to: "/pricing", icon: CreditCard, label: "Billing" },
   { to: "/settings", icon: Settings, label: "Settings" },
 ];

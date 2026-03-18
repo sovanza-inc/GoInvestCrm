@@ -8,7 +8,7 @@ import io
 
 from database import db
 from auth import get_current_user
-from models import LeadCreate, LeadUpdate, BulkUpdateLeads, BulkDeleteLeads
+from models import LeadCreate, LeadUpdate, BulkUpdateLeads, BulkDeleteLeads, LeadAssign
 
 router = APIRouter(prefix="/leads")
 
@@ -265,3 +265,32 @@ async def bulk_delete_leads(data: BulkDeleteLeads, user=Depends(get_current_user
         'message': f"Deleted {result.deleted_count} leads"
     }
 
+
+
+
+@router.put("/{lead_id}/assign")
+async def assign_lead(lead_id: str, data: LeadAssign, user=Depends(get_current_user)):
+    """Assign lead to team member"""
+    # Get user's team
+    user_data = await db.users.find_one({'id': user['id']})
+    team_id = user_data.get('team_id')
+    
+    # Verify assignee is in same team
+    assignee = await db.users.find_one({'id': data.assigned_to})
+    if not assignee:
+        raise HTTPException(status_code=404, detail="Assignee not found")
+    
+    if team_id and assignee.get('team_id') != team_id:
+        raise HTTPException(status_code=403, detail="Can only assign to team members")
+    
+    # Update lead
+    result = await db.leads.update_one(
+        {'id': lead_id, 'user_id': user['id']},
+        {'$set': {'assigned_to': data.assigned_to, 'assigned_at': datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Lead not found")
+    
+    lead = await db.leads.find_one({'id': lead_id}, {'_id': 0})
+    return lead

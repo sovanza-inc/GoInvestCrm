@@ -165,6 +165,55 @@ backend:
         agent: "testing"
         comment: "TESTED ✅ - Bulk delete working correctly. Successfully deleted leads in bulk operation. Proper validation: rejects empty lead_ids array. Permission validation ensures users only delete their own leads. Deletion verified with 404 responses for deleted lead IDs."
 
+
+  - task: "Profile API Endpoints"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/routes/profile.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Created profile routes: GET /api/profile (with statistics), PUT /api/profile (update profile), PUT /api/profile/password (change password with validation). Returns user stats: leads count, conversations count, team size."
+  
+  - task: "Team Management API"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/routes/team.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Created team routes: POST /api/team/invite, GET /api/team/members, PUT /api/team/members/{id}, DELETE /api/team/members/{id}. Implemented role-based permissions (admin, manager, agent). Added team_id field to users. Generate temporary passwords for invited members."
+  
+  - task: "Lead Assignment"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/routes/leads.py"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added PUT /api/leads/{id}/assign endpoint. Allows assigning leads to team members with team validation."
+  
+  - task: "Enhanced CRM Filters API"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/routes/conversations.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Enhanced GET /api/conversations with filters: platform, status, assigned_to, date_from, date_to, sort_by, sort_order. Search now includes message content. Returns filter metadata."
+
 frontend:
   - task: "Bulk Selection UI"
     implemented: true
@@ -238,6 +287,55 @@ frontend:
         agent: "main"
         comment: "Created bulk delete confirmation dialog with warning message. Requires explicit confirmation before deletion."
 
+
+  - task: "Profile Page UI"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/ProfilePage.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Created ProfilePage.js with statistics cards, profile update form (name, company, bio, phone), password change section, subscription/role badges. All forms have validation and loading states."
+  
+  - task: "Team Management Page UI"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/TeamPage.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Created TeamPage.js with team member table, invite dialog, edit role dialog, remove member functionality. Shows role descriptions, member avatars, roles with color badges. Temporary password display on invite."
+  
+  - task: "Enhanced CRM Filters UI"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/CRMPage.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Enhanced CRMPage with advanced filters popover. Added platform filter, status filter, sort options. Clear all filters button, visual indicator when filters active. Search enhanced to include message content."
+  
+  - task: "Navigation Updates"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/Layout.js, /app/frontend/src/App.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added Profile and Team links to sidebar navigation. Added routes for /profile and /team in App.js. Updated icons."
+
 metadata:
   created_by: "main_agent"
   version: "1.0"
@@ -290,6 +388,71 @@ agent_communication:
       3. Selecting multiple leads and updating status/tags
       4. Bulk delete with confirmation
       5. Error handling for invalid CSV files
+  
+  - agent: "main"
+    message: |
+      FEATURES #2, #3 IMPLEMENTED: Profile Page + Team Management + Enhanced CRM Filters
+      
+      ## Profile Page (/profile)
+      Backend:
+      - GET /api/profile - Get user profile with statistics
+      - PUT /api/profile - Update profile (name, company, bio, phone)
+      - PUT /api/profile/password - Change password with validation
+      
+      Frontend:
+      - ProfilePage.js created with full UI
+      - Profile information form (name, company, bio, phone)
+      - Statistics cards (leads count, conversations count, team size)
+      - Password change section with validation
+      - Subscription tier and role badges
+      - Email field (read-only)
+      
+      ## Team Management (/team)
+      Backend:
+      - POST /api/team/invite - Invite team members with role assignment
+      - GET /api/team/members - List all team members
+      - PUT /api/team/members/{id} - Update member role
+      - DELETE /api/team/members/{id} - Remove team member
+      - Added team_id and role fields to user model
+      - 3 roles: Admin (full access), Manager (enhanced), Agent (basic)
+      - Permission-based access control
+      
+      Frontend:
+      - TeamPage.js created with full team management UI
+      - Team member table with avatars, roles, join dates
+      - Invite member dialog with email, name, role selection
+      - Edit role dialog for changing member permissions
+      - Remove member with confirmation
+      - Role descriptions cards (Admin, Manager, Agent)
+      - Temporary password generation for invited members
+      
+      ## Enhanced CRM Filters
+      Backend:
+      - Enhanced GET /api/conversations with new filters:
+        * platform - Filter by social platform
+        * status - active/archived
+        * assigned_to - Filter by team member
+        * date_from, date_to - Date range filtering
+        * sort_by - Sort by last_message_at, created_at, lead_name
+        * search - Search in lead name, handle, AND last message content
+      
+      Frontend:
+      - Advanced filters popover in CRMPage
+      - Platform dropdown filter (Instagram, Facebook, LinkedIn, Twitter)
+      - Status filter (Active, Archived)
+      - Sort by options (Recent Activity, Date Created, Name A-Z)
+      - Clear all filters button
+      - Visual indicator when filters are applied
+      - Responsive filter UI
+      
+      ## Additional Updates:
+      - Updated App.js routes to include /profile and /team
+      - Updated Layout.js sidebar with Profile and Team navigation links
+      - Added database indexes for team_id and assigned_to fields
+      - Added ProfileUpdate, PasswordChange, TeamInvite, TeamMemberUpdate, LeadAssign models
+      - Added lead assignment endpoint: PUT /api/leads/{id}/assign
+      
+      All 3 features are COMPLETE and ready for testing!
   
   - agent: "testing"
     message: |

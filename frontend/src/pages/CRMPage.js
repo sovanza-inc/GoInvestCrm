@@ -5,7 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Search, Star, Send, Sparkles, ArrowLeft, Loader2 } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Search, Star, Send, Sparkles, ArrowLeft, Loader2, Filter, X } from "lucide-react";
 import { toast } from "sonner";
 
 const platformColors = { instagram: "text-pink-400 border-pink-500/30", facebook: "text-blue-400 border-blue-500/30", linkedin: "text-sky-400 border-sky-500/30", twitter: "text-cyan-400 border-cyan-500/30" };
@@ -68,16 +70,25 @@ export default function CRMPage() {
   const [aiLoading, setAiLoading] = useState(false);
   const [showMobile, setShowMobile] = useState(false);
   const msgEndRef = useRef(null);
+  
+  // Enhanced filters
+  const [platformFilter, setPlatformFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [sortBy, setSortBy] = useState("last_message_at");
+  const [showFilters, setShowFilters] = useState(false);
 
   const fetchConversations = useCallback(async () => {
     try {
       const params = {};
       if (searchQ) params.search = searchQ;
       if (filter === "starred") params.starred = true;
+      if (platformFilter !== "all") params.platform = platformFilter;
+      if (statusFilter !== "all") params.status = statusFilter;
+      if (sortBy) params.sort_by = sortBy;
       const res = await api.get("/conversations", { params });
       setConversations(res.data.conversations);
     } catch (err) { console.error(err); }
-  }, [searchQ, filter]);
+  }, [searchQ, filter, platformFilter, statusFilter, sortBy]);
 
   useEffect(() => { fetchConversations(); }, [fetchConversations]);
 
@@ -139,15 +150,98 @@ export default function CRMPage() {
               className="pl-9 bg-slate-950/50 border-slate-700 h-9 text-sm text-slate-200 placeholder:text-slate-600"
               value={searchQ} onChange={e => setSearchQ(e.target.value)} />
           </div>
-          <div className="flex gap-1 mb-3">
-            {["all", "unread", "starred"].map(f => (
-              <Button key={f} variant={filter === f ? "default" : "ghost"} size="sm"
-                data-testid={`crm-filter-${f}`}
-                className={`text-xs h-7 ${filter === f ? "bg-blue-600/20 text-blue-400 hover:bg-blue-600/30" : "text-slate-500 hover:text-slate-300"}`}
-                onClick={() => setFilter(f)}>
-                {f.charAt(0).toUpperCase() + f.slice(1)}
-              </Button>
-            ))}
+          <div className="flex gap-2 mb-3 flex-wrap">
+            <div className="flex gap-1 flex-1">
+              {["all", "unread", "starred"].map(f => (
+                <Button key={f} variant={filter === f ? "default" : "ghost"} size="sm"
+                  data-testid={`crm-filter-${f}`}
+                  className={`text-xs h-7 ${filter === f ? "bg-blue-600/20 text-blue-400 hover:bg-blue-600/30" : "text-slate-500 hover:text-slate-300"}`}
+                  onClick={() => setFilter(f)}>
+                  {f.charAt(0).toUpperCase() + f.slice(1)}
+                </Button>
+              ))}
+            </div>
+            <Popover open={showFilters} onOpenChange={setShowFilters}>
+              <PopoverTrigger asChild>
+                <Button variant="ghost" size="sm" className="text-xs h-7 text-slate-400 hover:text-slate-200">
+                  <Filter className="w-3 h-3 mr-1" /> More Filters
+                  {(platformFilter !== "all" || statusFilter !== "all") && (
+                    <span className="ml-1 w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-72 bg-slate-900 border-slate-800 p-4" align="end">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="text-sm font-semibold text-white">Advanced Filters</h4>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="h-6 text-xs text-slate-400"
+                      onClick={() => {
+                        setPlatformFilter("all");
+                        setStatusFilter("all");
+                        setSortBy("last_message_at");
+                      }}
+                    >
+                      <X className="w-3 h-3 mr-1" /> Clear
+                    </Button>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <label className="text-xs text-slate-400">Platform</label>
+                    <Select value={platformFilter} onValueChange={setPlatformFilter}>
+                      <SelectTrigger className="bg-slate-950/50 border-slate-700 text-slate-300 h-8 text-xs">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="bg-slate-900 border-slate-700">
+                        <SelectItem value="all">All Platforms</SelectItem>
+                        <SelectItem value="instagram">Instagram</SelectItem>
+                        <SelectItem value="facebook">Facebook</SelectItem>
+                        <SelectItem value="linkedin">LinkedIn</SelectItem>
+                        <SelectItem value="twitter">Twitter</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-xs text-slate-400">Status</label>
+                    <Select value={statusFilter} onValueChange={setStatusFilter}>
+                      <SelectTrigger className="bg-slate-950/50 border-slate-700 text-slate-300 h-8 text-xs">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="bg-slate-900 border-slate-700">
+                        <SelectItem value="all">All Status</SelectItem>
+                        <SelectItem value="active">Active</SelectItem>
+                        <SelectItem value="archived">Archived</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-xs text-slate-400">Sort By</label>
+                    <Select value={sortBy} onValueChange={setSortBy}>
+                      <SelectTrigger className="bg-slate-950/50 border-slate-700 text-slate-300 h-8 text-xs">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="bg-slate-900 border-slate-700">
+                        <SelectItem value="last_message_at">Recent Activity</SelectItem>
+                        <SelectItem value="created_at">Date Created</SelectItem>
+                        <SelectItem value="lead_name">Name (A-Z)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <Button 
+                    size="sm" 
+                    className="w-full bg-blue-600 hover:bg-blue-500 h-8 text-xs"
+                    onClick={() => setShowFilters(false)}
+                  >
+                    Apply Filters
+                  </Button>
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
           <ScrollArea className="flex-1">
             <div className="space-y-1 pr-2" data-testid="crm-inbox-list">

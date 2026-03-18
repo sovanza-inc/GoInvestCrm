@@ -81,3 +81,29 @@ class BulkUpdateLeads(BaseModel):
 
 class BulkDeleteLeads(BaseModel):
     lead_ids: List[str]
+
+
+class ProfileUpdate(BaseModel):
+    name: Optional[str] = None
+    company: Optional[str] = None
+    bio: Optional[str] = None
+    phone: Optional[str] = None
+
+
+class PasswordChange(BaseModel):
+    current_password: str
+    new_password: str
+
+
+class TeamInvite(BaseModel):
+    email: str
+    role: str = "agent"  # admin, manager, agent
+    name: Optional[str] = None
+
+
+class TeamMemberUpdate(BaseModel):
+    role: str
+
+
+class LeadAssign(BaseModel):
+    assigned_to: str  # user_id

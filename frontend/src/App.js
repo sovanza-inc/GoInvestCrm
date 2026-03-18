@@ -15,6 +15,8 @@ import SettingsPage from "@/pages/SettingsPage";
 import PricingPage from "@/pages/PricingPage";
 import BlogPage from "@/pages/BlogPage";
 import BlogDetailPage from "@/pages/BlogDetailPage";
+import ProfilePage from "@/pages/ProfilePage";
+import TeamPage from "@/pages/TeamPage";
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -42,6 +44,8 @@ function AppRoutes() {
         <Route path="/pricing" element={<PricingPage />} />
         <Route path="/billing/success" element={<PricingPage />} />
         <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/team" element={<TeamPage />} />
       </Route>
     </Routes>
   );

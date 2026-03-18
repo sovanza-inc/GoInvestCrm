@@ -13,24 +13,65 @@ router = APIRouter(prefix="/conversations")
 
 @router.get("")
 async def get_conversations(
-    user=Depends(get_current_user), platform: Optional[str] = None,
-    status: Optional[str] = None, starred: Optional[bool] = None,
-    search: Optional[str] = None
+    user=Depends(get_current_user), 
+    platform: Optional[str] = None,
+    status: Optional[str] = None, 
+    starred: Optional[bool] = None,
+    search: Optional[str] = None,
+    assigned_to: Optional[str] = None,
+    date_from: Optional[str] = None,
+    date_to: Optional[str] = None,
+    sort_by: Optional[str] = "last_message_at",
+    sort_order: Optional[str] = "desc"
 ):
     query = {'user_id': user['id']}
+    
     if platform:
         query['platform'] = platform
     if status:
         query['status'] = status
     if starred is not None:
         query['starred'] = starred
+    if assigned_to:
+        query['assigned_to'] = assigned_to
+    
+    # Date range filter
+    if date_from or date_to:
+        date_query = {}
+        if date_from:
+            date_query['$gte'] = date_from
+        if date_to:
+            date_query['$lte'] = date_to
+        if date_query:
+            query['last_message_at'] = date_query
+    
+    # Search in conversation details
     if search:
         query['$or'] = [
             {'lead_name': {'$regex': search, '$options': 'i'}},
-            {'lead_handle': {'$regex': search, '$options': 'i'}}
+            {'lead_handle': {'$regex': search, '$options': 'i'}},
+            {'last_message': {'$regex': search, '$options': 'i'}}
         ]
-    conversations = await db.conversations.find(query, {'_id': 0}).sort('last_message_at', -1).to_list(100)
-    return {'conversations': conversations}
+    
+    # Sort direction
+    sort_dir = -1 if sort_order == 'desc' else 1
+    
+    conversations = await db.conversations.find(query, {'_id': 0}).sort(sort_by, sort_dir).to_list(200)
+    total = await db.conversations.count_documents(query)
+    
+    return {
+        'conversations': conversations,
+        'total': total,
+        'filters_applied': {
+            'platform': platform,
+            'status': status,
+            'starred': starred,
+            'search': search,
+            'assigned_to': assigned_to,
+            'date_from': date_from,
+            'date_to': date_to
+        }
+    }
 
 
 @router.get("/{conv_id}")
