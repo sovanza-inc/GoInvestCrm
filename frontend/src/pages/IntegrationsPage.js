@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   MessageSquare, Send, Search, Plug, PlugZap, Trash2,
-  Phone, Instagram, ArrowLeft, Loader2, Wifi, WifiOff
+  Phone, Instagram, ArrowLeft, Loader2, Wifi, WifiOff, Linkedin
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -124,6 +124,7 @@ export default function IntegrationsPage() {
   const platformConfig = {
     whatsapp: { icon: Phone, label: "WhatsApp", color: "text-green-400", bg: "bg-green-500/10" },
     instagram: { icon: Instagram, label: "Instagram", color: "text-pink-400", bg: "bg-pink-500/10" },
+    linkedin: { icon: Linkedin, label: "LinkedIn", color: "text-sky-400", bg: "bg-sky-500/10" },
   };
 
   return (
@@ -144,6 +145,9 @@ export default function IntegrationsPage() {
           </TabsTrigger>
           <TabsTrigger value="instagram" className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary" data-testid="tab-instagram" disabled={!isConnected("instagram")}>
             <Instagram className="w-4 h-4 mr-1.5" /> Instagram
+          </TabsTrigger>
+          <TabsTrigger value="linkedin" className="data-[state=active]:bg-primary/10 data-[state=active]:text-primary" data-testid="tab-linkedin" disabled={!isConnected("linkedin")}>
+            <Linkedin className="w-4 h-4 mr-1.5" /> LinkedIn
           </TabsTrigger>
         </TabsList>
 
@@ -227,7 +231,7 @@ export default function IntegrationsPage() {
         </TabsContent>
 
         {/* Platform Inbox Tabs (WhatsApp & Instagram share same UI) */}
-        {["whatsapp", "instagram"].map(platform => (
+        {["whatsapp", "instagram", "linkedin"].map(platform => (
           <TabsContent key={platform} value={platform} className="mt-6">
             {isConnected(platform) && (
               <PlatformInbox

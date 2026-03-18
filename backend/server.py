@@ -19,6 +19,7 @@ from routes.profile import router as profile_router
 from routes.team import router as team_router
 from routes.autopilot import router as autopilot_router
 from routes.integrations import router as integrations_router
+from routes.activity import router as activity_router
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -40,6 +41,7 @@ api_router.include_router(profile_router)
 api_router.include_router(team_router)
 api_router.include_router(autopilot_router)
 api_router.include_router(integrations_router)
+api_router.include_router(activity_router)
 
 
 @api_router.get("/")
@@ -77,6 +79,8 @@ async def startup():
     await db.integrations.create_index([('user_id', 1), ('platform', 1)], unique=True)
     await db.platform_conversations.create_index([('user_id', 1), ('platform', 1)])
     await db.platform_messages.create_index('conversation_id')
+    await db.activity_log.create_index([('user_id', 1), ('timestamp', -1)])
+    await db.activity_log.create_index('entity_type')
     logger.info("GoSocial API started, indexes created")
 
 

@@ -140,10 +140,17 @@ class CampaignUpdate(BaseModel):
 
 # Integration Models
 class IntegrationConnect(BaseModel):
-    platform: str  # whatsapp, instagram
+    platform: str  # whatsapp, instagram, linkedin
     account_name: Optional[str] = None
     account_id: Optional[str] = None
 
 
 class IntegrationMessage(BaseModel):
     content: str
+
+
+# Voice message model
+class VoiceMessageCreate(BaseModel):
+    conversation_id: str
+    duration: float = 0
+    audio_url: Optional[str] = None

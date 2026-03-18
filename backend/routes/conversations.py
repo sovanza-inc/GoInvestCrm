@@ -6,7 +6,7 @@ import random
 
 from database import db
 from auth import get_current_user
-from models import MessageCreate
+from models import MessageCreate, VoiceMessageCreate
 
 router = APIRouter(prefix="/conversations")
 
@@ -111,3 +111,32 @@ async def toggle_star(conv_id: str, user=Depends(get_current_user)):
     new_starred = not conv.get('starred', False)
     await db.conversations.update_one({'id': conv_id}, {'$set': {'starred': new_starred}})
     return {'starred': new_starred}
+
+
+@router.post("/{conv_id}/voice")
+async def send_voice_message(conv_id: str, data: VoiceMessageCreate, user=Depends(get_current_user)):
+    """Send a voice message in a conversation"""
+    conv = await db.conversations.find_one({'id': conv_id, 'user_id': user['id']})
+    if not conv:
+        raise HTTPException(status_code=404, detail="Conversation not found")
+
+    msg_id = str(uuid.uuid4())
+    now = datetime.now(timezone.utc).isoformat()
+    msg_doc = {
+        'id': msg_id,
+        'conversation_id': conv_id,
+        'sender': 'user',
+        'content': '[Voice Message]',
+        'message_type': 'voice',
+        'audio_url': data.audio_url or '',
+        'duration': data.duration,
+        'timestamp': now,
+        'ai_generated': False,
+    }
+    await db.messages.insert_one(msg_doc)
+    await db.conversations.update_one(
+        {'id': conv_id},
+        {'$set': {'last_message': 'Voice message', 'last_message_at': now, 'status': 'active'}}
+    )
+    msg_doc.pop('_id', None)
+    return msg_doc

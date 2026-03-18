@@ -7,10 +7,103 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Search, Star, Send, Sparkles, ArrowLeft, Loader2, Filter, X } from "lucide-react";
+import { Search, Star, Send, Sparkles, ArrowLeft, Loader2, Filter, X, Mic, MicOff, Play, Pause } from "lucide-react";
 import { toast } from "sonner";
 
 const platformColors = { instagram: "text-pink-400 border-pink-500/30", facebook: "text-blue-400 border-blue-500/30", linkedin: "text-sky-400 border-sky-500/30", twitter: "text-cyan-400 border-cyan-500/30" };
+
+function VoiceMessage({ duration, sender }) {
+  const [playing, setPlaying] = useState(false);
+  const [progress, setProgress] = useState(0);
+
+  const togglePlay = () => {
+    if (playing) {
+      setPlaying(false);
+      return;
+    }
+    setPlaying(true);
+    setProgress(0);
+    const interval = setInterval(() => {
+      setProgress(prev => {
+        if (prev >= 100) { clearInterval(interval); setPlaying(false); return 0; }
+        return prev + (100 / (duration || 3) / 10);
+      });
+    }, 100);
+  };
+
+  const mins = Math.floor((duration || 0) / 60);
+  const secs = Math.floor((duration || 0) % 60);
+
+  return (
+    <div className="flex items-center gap-2.5 min-w-[180px]" data-testid="voice-message">
+      <button onClick={togglePlay}
+        className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+          sender === "user" ? "bg-white/20 hover:bg-white/30" : "bg-primary/20 hover:bg-primary/30"
+        } transition-colors`}>
+        {playing ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5 ml-0.5" />}
+      </button>
+      <div className="flex-1 space-y-1">
+        <div className="h-1.5 bg-black/10 dark:bg-white/10 rounded-full overflow-hidden">
+          <div className="h-full bg-current rounded-full transition-all" style={{ width: `${progress}%` }} />
+        </div>
+        <span className="text-[10px] opacity-70">{mins}:{secs.toString().padStart(2, '0')}</span>
+      </div>
+    </div>
+  );
+}
+
+function VoiceRecorder({ onSend, onCancel }) {
+  const [recording, setRecording] = useState(false);
+  const [elapsed, setElapsed] = useState(0);
+
+  useEffect(() => {
+    let interval;
+    if (recording) {
+      interval = setInterval(() => setElapsed(p => p + 1), 1000);
+    }
+    return () => clearInterval(interval);
+  }, [recording]);
+
+  const startRecording = () => { setRecording(true); setElapsed(0); };
+  const stopAndSend = () => {
+    setRecording(false);
+    onSend(elapsed);
+  };
+
+  const mins = Math.floor(elapsed / 60);
+  const secs = elapsed % 60;
+
+  return (
+    <div className="flex items-center gap-3 flex-1" data-testid="voice-recorder">
+      {!recording ? (
+        <Button type="button" variant="ghost" size="icon" onClick={startRecording}
+          className="text-red-400 hover:text-red-300 hover:bg-red-500/10 h-10 w-10" data-testid="start-recording-btn">
+          <Mic className="w-5 h-5" />
+        </Button>
+      ) : (
+        <>
+          <div className="flex items-center gap-2 flex-1 px-3 py-2 rounded-lg bg-red-500/10 border border-red-500/20">
+            <div className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" />
+            <span className="text-sm text-red-400 font-mono">{mins}:{secs.toString().padStart(2, '0')}</span>
+            <div className="flex-1 flex items-center gap-0.5">
+              {Array.from({ length: 20 }).map((_, i) => (
+                <div key={i} className="w-1 bg-red-400/60 rounded-full animate-pulse" style={{ height: `${Math.random() * 16 + 4}px`, animationDelay: `${i * 50}ms` }} />
+              ))}
+            </div>
+          </div>
+          <Button type="button" variant="ghost" size="icon" onClick={onCancel}
+            className="text-muted-foreground hover:text-foreground h-10 w-10" data-testid="cancel-recording-btn">
+            <X className="w-4 h-4" />
+          </Button>
+          <Button type="button" onClick={stopAndSend}
+            className="bg-red-500 hover:bg-red-400 text-white h-10 px-4" data-testid="send-recording-btn">
+            <Send className="w-4 h-4" />
+          </Button>
+        </>
+      )}
+    </div>
+  );
+}
 
 function ConversationItem({ conv, isActive, onClick }) {
   return (
@@ -69,6 +162,7 @@ export default function CRMPage() {
   const [aiSuggestions, setAiSuggestions] = useState([]);
   const [aiLoading, setAiLoading] = useState(false);
   const [showMobile, setShowMobile] = useState(false);
+  const [showVoiceRecorder, setShowVoiceRecorder] = useState(false);
   const msgEndRef = useRef(null);
   
   // Enhanced filters
@@ -132,6 +226,19 @@ export default function CRMPage() {
     e.stopPropagation();
     try { await api.put(`/conversations/${convId}/star`); fetchConversations(); }
     catch { toast.error("Failed"); }
+  };
+
+  const sendVoiceMessage = async (duration) => {
+    if (!activeConv) return;
+    try {
+      const res = await api.post(`/conversations/${activeConv.id}/voice`, {
+        conversation_id: activeConv.id,
+        duration: duration,
+      });
+      setMessages(prev => [...prev, res.data]);
+      setShowVoiceRecorder(false);
+      fetchConversations();
+    } catch { toast.error("Failed to send voice message"); }
   };
 
   const filteredConvs = filter === "unread" ? conversations.filter(c => c.unread_count > 0) : conversations;
@@ -286,7 +393,11 @@ export default function CRMPage() {
                   {messages.map(m => (
                     <div key={m.id} className={`flex ${m.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
                       <div className={`max-w-[75%] px-4 py-2.5 ${m.sender === 'user' ? 'msg-user' : 'msg-lead'}`}>
-                        <p className="text-sm text-foreground leading-relaxed">{m.content}</p>
+                        {m.message_type === 'voice' ? (
+                          <VoiceMessage duration={m.duration} sender={m.sender} />
+                        ) : (
+                          <p className="text-sm text-foreground leading-relaxed">{m.content}</p>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -309,13 +420,28 @@ export default function CRMPage() {
                   data-testid="ai-suggest-btn">
                   <Sparkles className="w-4 h-4" />
                 </Button>
-                <Input placeholder="Type your message..." data-testid="message-input"
-                  className="flex-1 bg-slate-950/50 border-border h-10 text-foreground placeholder:text-muted-foreground"
-                  value={msgInput} onChange={e => setMsgInput(e.target.value)} />
-                <Button type="submit" disabled={sending || !msgInput.trim()} data-testid="send-message-btn"
-                  className="bg-blue-600 hover:bg-blue-500 text-foreground h-10 px-4">
-                  {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-                </Button>
+                {showVoiceRecorder ? (
+                  <VoiceRecorder
+                    onSend={sendVoiceMessage}
+                    onCancel={() => setShowVoiceRecorder(false)}
+                  />
+                ) : (
+                  <>
+                    <Input placeholder="Type your message..." data-testid="message-input"
+                      className="flex-1 bg-card/50 border-border h-10 text-foreground placeholder:text-muted-foreground"
+                      value={msgInput} onChange={e => setMsgInput(e.target.value)} />
+                    <Button type="button" variant="ghost" size="icon"
+                      className="shrink-0 text-muted-foreground hover:text-red-400 hover:bg-red-500/10 h-10 w-10"
+                      onClick={() => setShowVoiceRecorder(true)}
+                      data-testid="voice-record-btn">
+                      <Mic className="w-4 h-4" />
+                    </Button>
+                    <Button type="submit" disabled={sending || !msgInput.trim()} data-testid="send-message-btn"
+                      className="bg-primary hover:bg-primary/90 text-primary-foreground h-10 px-4">
+                      {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                    </Button>
+                  </>
+                )}
               </form>
             </>
           )}

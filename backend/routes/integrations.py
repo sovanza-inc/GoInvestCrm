@@ -9,7 +9,7 @@ from models import IntegrationConnect, IntegrationMessage
 
 router = APIRouter(prefix="/integrations")
 
-SUPPORTED_PLATFORMS = ['whatsapp', 'instagram']
+SUPPORTED_PLATFORMS = ['whatsapp', 'instagram', 'linkedin']
 
 
 @router.get("")
