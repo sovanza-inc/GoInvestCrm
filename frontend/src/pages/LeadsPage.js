@@ -303,7 +303,7 @@ export default function LeadsPage() {
               ) : leads.length === 0 ? (
                 <TableRow><TableCell colSpan={8} className="text-center py-8 text-muted-foreground">No leads found</TableCell></TableRow>
               ) : leads.map((lead) => (
-                <TableRow key={lead.id} data-testid={`lead-row-${lead.id}`} className="border-border/50 hover:bg-slate-800/30">
+                <TableRow key={lead.id} data-testid={`lead-row-${lead.id}`} className="border-border/50 hover:bg-card/30">
                   <TableCell>
                     <Checkbox 
                       checked={selectedLeads.includes(lead.id)}
@@ -466,7 +466,7 @@ export default function LeadsPage() {
             <div className="flex gap-2">
               <Button type="button" variant="outline" onClick={() => setShowBulkUpdate(false)}
                 className="flex-1 border-border text-foreground">Cancel</Button>
-              <Button type="submit" className="flex-1 bg-amber-600 hover:bg-amber-500 text-white">
+              <Button type="submit" className="flex-1 bg-amber-600 hover:bg-amber-500 text-foreground">
                 Update Leads
               </Button>
             </div>

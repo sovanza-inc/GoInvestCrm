@@ -165,16 +165,16 @@ export default function TeamPage() {
             </TableHeader>
             <TableBody>
               {loading ? (
-                <TableRow><TableCell colSpan={5} className="text-center py-8 text-slate-500">Loading...</TableCell></TableRow>
+                <TableRow><TableCell colSpan={5} className="text-center py-8 text-muted-foreground">Loading...</TableCell></TableRow>
               ) : members.length === 0 ? (
-                <TableRow><TableCell colSpan={5} className="text-center py-8 text-slate-500">No team members yet</TableCell></TableRow>
+                <TableRow><TableCell colSpan={5} className="text-center py-8 text-muted-foreground">No team members yet</TableCell></TableRow>
               ) : members.map((member) => {
                 const RoleIcon = ROLE_ICONS[member.role] || Users;
                 return (
-                  <TableRow key={member.id} className="border-border/50 hover:bg-slate-800/30">
+                  <TableRow key={member.id} className="border-border/50 hover:bg-card/30">
                     <TableCell>
                       <div className="flex items-center gap-3">
-                        <img src={member.avatar} alt={member.name} className="w-8 h-8 rounded-full bg-slate-700" />
+                        <img src={member.avatar} alt={member.name} className="w-8 h-8 rounded-full bg-muted" />
                         <span className="text-sm font-medium text-foreground">{member.name}</span>
                       </div>
                     </TableCell>

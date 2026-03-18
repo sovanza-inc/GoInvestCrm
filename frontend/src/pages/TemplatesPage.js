@@ -74,11 +74,11 @@ export default function TemplatesPage() {
     <div className="space-y-6 animate-fade-in">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>Templates</h1>
-          <p className="text-sm text-slate-400 mt-1">Message templates for every sales scenario</p>
+          <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>Templates</h1>
+          <p className="text-sm text-muted-foreground mt-1">Message templates for every sales scenario</p>
         </div>
         <Button onClick={() => openEditor()} data-testid="create-template-btn"
-          className="bg-blue-600 hover:bg-blue-500 text-white font-bold">
+          className="bg-blue-600 hover:bg-blue-500 text-foreground font-bold">
           <Plus className="w-4 h-4 mr-2" /> New Template
         </Button>
       </div>
@@ -86,16 +86,16 @@ export default function TemplatesPage() {
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input placeholder="Search templates..." data-testid="templates-search-input"
-            className="pl-9 bg-slate-950/50 border-slate-700 h-10 text-slate-200 placeholder:text-slate-600"
+            className="pl-9 bg-slate-950/50 border-border h-10 text-foreground placeholder:text-muted-foreground"
             value={search} onChange={e => setSearch(e.target.value)} />
         </div>
         <Select value={catFilter} onValueChange={setCatFilter}>
-          <SelectTrigger className="w-48 bg-slate-950/50 border-slate-700 text-slate-300" data-testid="templates-category-filter">
+          <SelectTrigger className="w-48 bg-slate-950/50 border-border text-muted-foreground" data-testid="templates-category-filter">
             <SelectValue placeholder="Category" />
           </SelectTrigger>
-          <SelectContent className="bg-slate-900 border-slate-700">
+          <SelectContent className="bg-card border-border">
             <SelectItem value="all">All Categories</SelectItem>
             <SelectItem value="cold_outreach">Cold Outreach</SelectItem>
             <SelectItem value="follow_up">Follow Up</SelectItem>
@@ -111,27 +111,27 @@ export default function TemplatesPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" data-testid="templates-grid">
         {templates.length === 0 ? (
           <div className="col-span-full text-center py-12">
-            <FileText className="w-10 h-10 text-slate-600 mx-auto mb-3" />
-            <p className="text-slate-500">No templates found</p>
+            <FileText className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
+            <p className="text-muted-foreground">No templates found</p>
           </div>
         ) : templates.map((t) => (
           <Card key={t.id} data-testid={`template-card-${t.id}`}
-            className="bg-slate-900/50 border-slate-800 hover:border-slate-700 transition-colors">
+            className="bg-card border-border hover:border-border transition-colors">
             <CardContent className="p-5">
               <div className="flex items-start justify-between mb-3">
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-sm font-semibold text-white truncate">{t.name}</h3>
-                  <Badge variant="outline" className="text-[10px] mt-1 text-slate-400 border-slate-700">
+                  <h3 className="text-sm font-semibold text-foreground truncate">{t.name}</h3>
+                  <Badge variant="outline" className="text-[10px] mt-1 text-muted-foreground border-border">
                     {CATEGORY_LABELS[t.category] || t.category}
                   </Badge>
                 </div>
-                <span className="text-[10px] text-slate-600 shrink-0 ml-2">Used {t.usage_count}x</span>
+                <span className="text-[10px] text-muted-foreground shrink-0 ml-2">Used {t.usage_count}x</span>
               </div>
-              <p className="text-xs text-slate-400 leading-relaxed line-clamp-4 mb-3">{t.content}</p>
+              <p className="text-xs text-muted-foreground leading-relaxed line-clamp-4 mb-3">{t.content}</p>
               {t.tags?.length > 0 && (
                 <div className="flex gap-1 flex-wrap mb-3">
                   {t.tags.map((tag, i) => (
-                    <Badge key={i} variant="outline" className="text-[9px] text-slate-500 border-slate-700/50">{tag}</Badge>
+                    <Badge key={i} variant="outline" className="text-[9px] text-muted-foreground border-border">{tag}</Badge>
                   ))}
                 </div>
               )}
@@ -140,7 +140,7 @@ export default function TemplatesPage() {
                   onClick={() => copyTemplate(t.content)} data-testid={`copy-template-${t.id}`}>
                   <Copy className="w-3 h-3 mr-1" /> Copy
                 </Button>
-                <Button variant="ghost" size="sm" className="h-7 text-xs text-slate-400 hover:text-slate-300"
+                <Button variant="ghost" size="sm" className="h-7 text-xs text-muted-foreground hover:text-muted-foreground"
                   onClick={() => openEditor(t)} data-testid={`edit-template-${t.id}`}>
                   <Edit className="w-3 h-3 mr-1" /> Edit
                 </Button>
@@ -156,16 +156,16 @@ export default function TemplatesPage() {
 
       {/* Editor Dialog */}
       <Dialog open={showEditor} onOpenChange={setShowEditor}>
-        <DialogContent className="bg-slate-900 border-slate-800 text-slate-200 max-w-lg">
-          <DialogHeader><DialogTitle className="text-white">{editing ? "Edit Template" : "New Template"}</DialogTitle></DialogHeader>
+        <DialogContent className="bg-card border-border text-foreground max-w-lg">
+          <DialogHeader><DialogTitle className="text-foreground">{editing ? "Edit Template" : "New Template"}</DialogTitle></DialogHeader>
           <form onSubmit={saveTemplate} className="space-y-4" data-testid="template-editor-form">
-            <div className="space-y-1.5"><Label className="text-slate-400 text-xs">Name</Label>
-              <Input data-testid="template-name-input" className="bg-slate-950/50 border-slate-700 text-slate-200"
+            <div className="space-y-1.5"><Label className="text-muted-foreground text-xs">Name</Label>
+              <Input data-testid="template-name-input" className="bg-slate-950/50 border-border text-foreground"
                 value={form.name} onChange={e => setForm({...form, name: e.target.value})} required /></div>
-            <div className="space-y-1.5"><Label className="text-slate-400 text-xs">Category</Label>
+            <div className="space-y-1.5"><Label className="text-muted-foreground text-xs">Category</Label>
               <Select value={form.category} onValueChange={v => setForm({...form, category: v})}>
-                <SelectTrigger className="bg-slate-950/50 border-slate-700 text-slate-300"><SelectValue /></SelectTrigger>
-                <SelectContent className="bg-slate-900 border-slate-700">
+                <SelectTrigger className="bg-slate-950/50 border-border text-muted-foreground"><SelectValue /></SelectTrigger>
+                <SelectContent className="bg-card border-border">
                   <SelectItem value="general">General</SelectItem>
                   <SelectItem value="cold_outreach">Cold Outreach</SelectItem>
                   <SelectItem value="follow_up">Follow Up</SelectItem>
@@ -175,16 +175,16 @@ export default function TemplatesPage() {
                   <SelectItem value="post_sale">Post Sale</SelectItem>
                 </SelectContent>
               </Select></div>
-            <div className="space-y-1.5"><Label className="text-slate-400 text-xs">Message Content</Label>
+            <div className="space-y-1.5"><Label className="text-muted-foreground text-xs">Message Content</Label>
               <Textarea data-testid="template-content-input" rows={5}
-                className="bg-slate-950/50 border-slate-700 text-slate-200"
+                className="bg-slate-950/50 border-border text-foreground"
                 value={form.content} onChange={e => setForm({...form, content: e.target.value})} required
                 placeholder="Use {name}, {topic}, {plan} as placeholders..." /></div>
-            <div className="space-y-1.5"><Label className="text-slate-400 text-xs">Tags (comma separated)</Label>
-              <Input className="bg-slate-950/50 border-slate-700 text-slate-200"
+            <div className="space-y-1.5"><Label className="text-muted-foreground text-xs">Tags (comma separated)</Label>
+              <Input className="bg-slate-950/50 border-border text-foreground"
                 value={form.tags} onChange={e => setForm({...form, tags: e.target.value})} placeholder="cold, opening" /></div>
             <Button type="submit" data-testid="save-template-btn"
-              className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold">
+              className="w-full bg-blue-600 hover:bg-blue-500 text-foreground font-bold">
               {editing ? "Update Template" : "Create Template"}
             </Button>
           </form>

@@ -22,34 +22,34 @@ function PlanCard({ plan, currentPlan, onSubscribe, loading }) {
 
   return (
     <Card data-testid={`plan-card-${plan.id}`}
-      className={`relative bg-slate-900/50 border transition-all hover:-translate-y-1 ${
-        isPopular ? "border-blue-500/50 shadow-[0_0_30px_rgba(59,130,246,0.15)]" : "border-slate-800 hover:border-slate-700"
+      className={`relative bg-card border transition-all hover:-translate-y-1 ${
+        isPopular ? "border-blue-500/50 shadow-[0_0_30px_rgba(59,130,246,0.15)]" : "border-border hover:border-border"
       }`}>
       {isPopular && (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-          <Badge className="bg-blue-600 text-white text-[10px] px-3 py-0.5">Most Popular</Badge>
+          <Badge className="bg-blue-600 text-foreground text-[10px] px-3 py-0.5">Most Popular</Badge>
         </div>
       )}
       <CardHeader className="pb-2 pt-6">
         <div className="flex items-center gap-3 mb-3">
           <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-            isPopular ? "bg-blue-600" : "bg-slate-800"
+            isPopular ? "bg-blue-600" : "bg-card"
           }`}>
-            <Icon className="w-5 h-5 text-white" />
+            <Icon className="w-5 h-5 text-foreground" />
           </div>
-          <CardTitle className="text-lg font-bold text-white">{plan.name}</CardTitle>
+          <CardTitle className="text-lg font-bold text-foreground">{plan.name}</CardTitle>
         </div>
         <div className="flex items-baseline gap-1">
-          <span className="text-4xl font-extrabold text-white" style={{ fontFamily: 'Outfit, sans-serif' }}>
+          <span className="text-4xl font-extrabold text-foreground" style={{ fontFamily: 'Outfit, sans-serif' }}>
             ${plan.price}
           </span>
-          <span className="text-sm text-slate-500">/month</span>
+          <span className="text-sm text-muted-foreground">/month</span>
         </div>
       </CardHeader>
       <CardContent className="pt-4">
         <ul className="space-y-2.5 mb-6">
           {features.map((f, i) => (
-            <li key={i} className="flex items-center gap-2.5 text-sm text-slate-300">
+            <li key={i} className="flex items-center gap-2.5 text-sm text-muted-foreground">
               <Check className={`w-4 h-4 shrink-0 ${isPopular ? "text-blue-400" : "text-emerald-400"}`} />
               {f}
             </li>
@@ -61,10 +61,10 @@ function PlanCard({ plan, currentPlan, onSubscribe, loading }) {
           data-testid={`subscribe-btn-${plan.id}`}
           className={`w-full h-11 font-bold ${
             isCurrent
-              ? "bg-slate-800 text-slate-400 cursor-not-allowed"
+              ? "bg-card text-muted-foreground cursor-not-allowed"
               : isPopular
-                ? "bg-blue-600 hover:bg-blue-500 text-white shadow-[0_0_15px_rgba(37,99,235,0.3)]"
-                : "bg-slate-800 hover:bg-slate-700 text-white border border-slate-700"
+                ? "bg-blue-600 hover:bg-blue-500 text-foreground shadow-[0_0_15px_rgba(37,99,235,0.3)]"
+                : "bg-card hover:bg-muted text-foreground border border-border"
           }`}
         >
           {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : isCurrent ? "Current Plan" : "Subscribe"}
@@ -104,8 +104,8 @@ function SuccessView({ sessionId }) {
     return (
       <div className="flex flex-col items-center justify-center py-20 animate-fade-in">
         <Loader2 className="w-10 h-10 text-blue-400 animate-spin mb-4" />
-        <h2 className="text-xl font-bold text-white mb-2">Processing your payment...</h2>
-        <p className="text-sm text-slate-400">Please wait while we confirm your subscription</p>
+        <h2 className="text-xl font-bold text-foreground mb-2">Processing your payment...</h2>
+        <p className="text-sm text-muted-foreground">Please wait while we confirm your subscription</p>
       </div>
     );
   }
@@ -116,12 +116,12 @@ function SuccessView({ sessionId }) {
         <div className="w-16 h-16 rounded-full bg-emerald-500/20 flex items-center justify-center mb-6">
           <CheckCircle className="w-8 h-8 text-emerald-400" />
         </div>
-        <h2 className="text-2xl font-bold text-white mb-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
+        <h2 className="text-2xl font-bold text-foreground mb-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
           Welcome to {SUBSCRIPTION_PLANS_NAMES[planId] || "GoSocial"}!
         </h2>
-        <p className="text-sm text-slate-400 mb-8">Your subscription is now active</p>
+        <p className="text-sm text-muted-foreground mb-8">Your subscription is now active</p>
         <Button onClick={() => navigate("/dashboard")} data-testid="go-to-dashboard-btn"
-          className="bg-blue-600 hover:bg-blue-500 text-white font-bold">
+          className="bg-blue-600 hover:bg-blue-500 text-foreground font-bold">
           Go to Dashboard
         </Button>
       </div>
@@ -130,9 +130,9 @@ function SuccessView({ sessionId }) {
 
   return (
     <div className="flex flex-col items-center justify-center py-20 animate-fade-in">
-      <h2 className="text-xl font-bold text-white mb-2">Payment status unclear</h2>
-      <p className="text-sm text-slate-400 mb-6">Please check your email for confirmation</p>
-      <Button onClick={() => navigate("/pricing")} className="bg-slate-800 text-white">
+      <h2 className="text-xl font-bold text-foreground mb-2">Payment status unclear</h2>
+      <p className="text-sm text-muted-foreground mb-6">Please check your email for confirmation</p>
+      <Button onClick={() => navigate("/pricing")} className="bg-card text-foreground">
         Back to Pricing
       </Button>
     </div>
@@ -189,15 +189,15 @@ export default function PricingPage() {
     );
   }
 
-  if (fetching) return <div className="flex items-center justify-center h-64 text-slate-500">Loading plans...</div>;
+  if (fetching) return <div className="flex items-center justify-center h-64 text-muted-foreground">Loading plans...</div>;
 
   return (
     <div className="space-y-8 animate-fade-in">
       <div className="text-center max-w-2xl mx-auto">
-        <h1 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight mb-3" style={{ fontFamily: 'Outfit, sans-serif' }}>
+        <h1 className="text-3xl md:text-4xl font-extrabold text-foreground tracking-tight mb-3" style={{ fontFamily: 'Outfit, sans-serif' }}>
           Choose your plan
         </h1>
-        <p className="text-base text-slate-400 leading-relaxed">
+        <p className="text-base text-muted-foreground leading-relaxed">
           Scale your social selling with the right tools. All plans include core CRM features.
         </p>
         {currentPlan !== "free" && (
@@ -219,7 +219,7 @@ export default function PricingPage() {
       </div>
 
       <div className="text-center">
-        <p className="text-xs text-slate-600">
+        <p className="text-xs text-muted-foreground">
           All plans billed monthly. Cancel anytime. 14-day money-back guarantee.
         </p>
       </div>

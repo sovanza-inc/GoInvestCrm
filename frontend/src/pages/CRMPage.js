@@ -15,19 +15,19 @@ const platformColors = { instagram: "text-pink-400 border-pink-500/30", facebook
 function ConversationItem({ conv, isActive, onClick }) {
   return (
     <div onClick={onClick} data-testid={`conversation-item-${conv.id}`}
-      className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all ${isActive ? "bg-blue-500/10 border border-blue-500/20" : "hover:bg-slate-800/50 border border-transparent"}`}>
-      <img src={conv.lead_avatar} alt={conv.lead_name} className="w-10 h-10 rounded-full bg-slate-700 shrink-0" />
+      className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all ${isActive ? "bg-blue-500/10 border border-blue-500/20" : "hover:bg-card/50 border border-transparent"}`}>
+      <img src={conv.lead_avatar} alt={conv.lead_name} className="w-10 h-10 rounded-full bg-muted shrink-0" />
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-slate-200 truncate">{conv.lead_name}</span>
+          <span className="text-sm font-medium text-foreground truncate">{conv.lead_name}</span>
           {conv.starred && <Star className="w-3 h-3 text-amber-400 fill-amber-400 shrink-0" />}
         </div>
-        <p className="text-xs text-slate-500 truncate mt-0.5">{conv.last_message}</p>
+        <p className="text-xs text-muted-foreground truncate mt-0.5">{conv.last_message}</p>
       </div>
       <div className="flex flex-col items-end gap-1 shrink-0">
         <Badge variant="outline" className={`text-[9px] px-1 py-0 ${platformColors[conv.platform] || ""}`}>{conv.platform}</Badge>
         {conv.unread_count > 0 && (
-          <span className="w-4.5 h-4.5 rounded-full bg-blue-600 text-white text-[9px] font-bold flex items-center justify-center min-w-[18px]">{conv.unread_count}</span>
+          <span className="w-4.5 h-4.5 rounded-full bg-blue-600 text-foreground text-[9px] font-bold flex items-center justify-center min-w-[18px]">{conv.unread_count}</span>
         )}
       </div>
     </div>
@@ -36,7 +36,7 @@ function ConversationItem({ conv, isActive, onClick }) {
 
 function AISuggestions({ suggestions, loading, onUse }) {
   if (loading) return (
-    <div className="p-4 text-center"><Loader2 className="w-5 h-5 animate-spin text-violet-400 mx-auto" /><p className="text-xs text-slate-500 mt-2">Generating suggestions...</p></div>
+    <div className="p-4 text-center"><Loader2 className="w-5 h-5 animate-spin text-violet-400 mx-auto" /><p className="text-xs text-muted-foreground mt-2">Generating suggestions...</p></div>
   );
   if (!suggestions?.length) return null;
   return (
@@ -50,8 +50,8 @@ function AISuggestions({ suggestions, loading, onUse }) {
           <div className="flex items-center justify-between mb-1.5">
             <Badge variant="outline" className="text-[9px] text-violet-300 border-violet-500/30">{s.tone}</Badge>
           </div>
-          <p className="text-sm text-slate-200 leading-relaxed">{s.message}</p>
-          <p className="text-[10px] text-slate-500 mt-1.5">{s.explanation}</p>
+          <p className="text-sm text-foreground leading-relaxed">{s.message}</p>
+          <p className="text-[10px] text-muted-foreground mt-1.5">{s.explanation}</p>
         </div>
       ))}
     </div>
@@ -142,12 +142,12 @@ export default function CRMPage() {
         {/* Inbox Panel */}
         <div className={`w-full lg:w-96 flex flex-col ${showMobile && activeConv ? "hidden lg:flex" : "flex"}`}>
           <div className="mb-3">
-            <h1 className="text-2xl font-bold text-white tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>Inbox</h1>
+            <h1 className="text-2xl font-bold text-foreground tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>Inbox</h1>
           </div>
           <div className="relative mb-3">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input placeholder="Search conversations..." data-testid="crm-search-input"
-              className="pl-9 bg-slate-950/50 border-slate-700 h-9 text-sm text-slate-200 placeholder:text-slate-600"
+              className="pl-9 bg-slate-950/50 border-border h-9 text-sm text-foreground placeholder:text-muted-foreground"
               value={searchQ} onChange={e => setSearchQ(e.target.value)} />
           </div>
           <div className="flex gap-2 mb-3 flex-wrap">
@@ -155,7 +155,7 @@ export default function CRMPage() {
               {["all", "unread", "starred"].map(f => (
                 <Button key={f} variant={filter === f ? "default" : "ghost"} size="sm"
                   data-testid={`crm-filter-${f}`}
-                  className={`text-xs h-7 ${filter === f ? "bg-blue-600/20 text-blue-400 hover:bg-blue-600/30" : "text-slate-500 hover:text-slate-300"}`}
+                  className={`text-xs h-7 ${filter === f ? "bg-blue-600/20 text-blue-400 hover:bg-blue-600/30" : "text-muted-foreground hover:text-muted-foreground"}`}
                   onClick={() => setFilter(f)}>
                   {f.charAt(0).toUpperCase() + f.slice(1)}
                 </Button>
@@ -163,21 +163,21 @@ export default function CRMPage() {
             </div>
             <Popover open={showFilters} onOpenChange={setShowFilters}>
               <PopoverTrigger asChild>
-                <Button variant="ghost" size="sm" className="text-xs h-7 text-slate-400 hover:text-slate-200">
+                <Button variant="ghost" size="sm" className="text-xs h-7 text-muted-foreground hover:text-foreground">
                   <Filter className="w-3 h-3 mr-1" /> More Filters
                   {(platformFilter !== "all" || statusFilter !== "all") && (
                     <span className="ml-1 w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
                   )}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-72 bg-slate-900 border-border p-4" align="end">
+              <PopoverContent className="w-72 bg-card border-border p-4" align="end">
                 <div className="space-y-4">
                   <div className="flex items-center justify-between mb-2">
-                    <h4 className="text-sm font-semibold text-white">Advanced Filters</h4>
+                    <h4 className="text-sm font-semibold text-foreground">Advanced Filters</h4>
                     <Button 
                       variant="ghost" 
                       size="sm" 
-                      className="h-6 text-xs text-slate-400"
+                      className="h-6 text-xs text-muted-foreground"
                       onClick={() => {
                         setPlatformFilter("all");
                         setStatusFilter("all");
@@ -189,12 +189,12 @@ export default function CRMPage() {
                   </div>
                   
                   <div className="space-y-2">
-                    <label className="text-xs text-slate-400">Platform</label>
+                    <label className="text-xs text-muted-foreground">Platform</label>
                     <Select value={platformFilter} onValueChange={setPlatformFilter}>
-                      <SelectTrigger className="bg-slate-950/50 border-slate-700 text-slate-300 h-8 text-xs">
+                      <SelectTrigger className="bg-slate-950/50 border-border text-muted-foreground h-8 text-xs">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent className="bg-slate-900 border-slate-700">
+                      <SelectContent className="bg-card border-border">
                         <SelectItem value="all">All Platforms</SelectItem>
                         <SelectItem value="instagram">Instagram</SelectItem>
                         <SelectItem value="facebook">Facebook</SelectItem>
@@ -205,12 +205,12 @@ export default function CRMPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-xs text-slate-400">Status</label>
+                    <label className="text-xs text-muted-foreground">Status</label>
                     <Select value={statusFilter} onValueChange={setStatusFilter}>
-                      <SelectTrigger className="bg-slate-950/50 border-slate-700 text-slate-300 h-8 text-xs">
+                      <SelectTrigger className="bg-slate-950/50 border-border text-muted-foreground h-8 text-xs">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent className="bg-slate-900 border-slate-700">
+                      <SelectContent className="bg-card border-border">
                         <SelectItem value="all">All Status</SelectItem>
                         <SelectItem value="active">Active</SelectItem>
                         <SelectItem value="archived">Archived</SelectItem>
@@ -219,12 +219,12 @@ export default function CRMPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-xs text-slate-400">Sort By</label>
+                    <label className="text-xs text-muted-foreground">Sort By</label>
                     <Select value={sortBy} onValueChange={setSortBy}>
-                      <SelectTrigger className="bg-slate-950/50 border-slate-700 text-slate-300 h-8 text-xs">
+                      <SelectTrigger className="bg-slate-950/50 border-border text-muted-foreground h-8 text-xs">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent className="bg-slate-900 border-slate-700">
+                      <SelectContent className="bg-card border-border">
                         <SelectItem value="last_message_at">Recent Activity</SelectItem>
                         <SelectItem value="created_at">Date Created</SelectItem>
                         <SelectItem value="lead_name">Name (A-Z)</SelectItem>
@@ -246,7 +246,7 @@ export default function CRMPage() {
           <ScrollArea className="flex-1">
             <div className="space-y-1 pr-2" data-testid="crm-inbox-list">
               {filteredConvs.length === 0 ? (
-                <p className="text-sm text-slate-500 text-center py-8">No conversations</p>
+                <p className="text-sm text-muted-foreground text-center py-8">No conversations</p>
               ) : filteredConvs.map(c => (
                 <ConversationItem key={c.id} conv={c} isActive={activeConv?.id === c.id} onClick={() => selectConversation(c)} />
               ))}
@@ -255,28 +255,28 @@ export default function CRMPage() {
         </div>
 
         {/* Chat Panel */}
-        <div className={`flex-1 flex flex-col bg-slate-900/30 rounded-xl border border-border/50 overflow-hidden ${!showMobile && !activeConv ? "hidden lg:flex" : showMobile && activeConv ? "flex" : "hidden lg:flex"}`}>
+        <div className={`flex-1 flex flex-col bg-card/30 rounded-xl border border-border/50 overflow-hidden ${!showMobile && !activeConv ? "hidden lg:flex" : showMobile && activeConv ? "flex" : "hidden lg:flex"}`}>
           {!activeConv ? (
             <div className="flex-1 flex items-center justify-center">
-              <p className="text-slate-500 text-sm">Select a conversation to start</p>
+              <p className="text-muted-foreground text-sm">Select a conversation to start</p>
             </div>
           ) : (
             <>
               {/* Chat Header */}
               <div className="flex items-center gap-3 p-4 border-b border-border/50">
-                <Button variant="ghost" size="icon" className="lg:hidden text-slate-400 h-8 w-8"
+                <Button variant="ghost" size="icon" className="lg:hidden text-muted-foreground h-8 w-8"
                   onClick={() => { setShowMobile(false); setActiveConv(null); }} data-testid="crm-back-btn">
                   <ArrowLeft className="w-4 h-4" />
                 </Button>
-                <img src={activeConv.lead_avatar} alt="" className="w-9 h-9 rounded-full bg-slate-700" />
+                <img src={activeConv.lead_avatar} alt="" className="w-9 h-9 rounded-full bg-muted" />
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-white">{activeConv.lead_name}</p>
-                  <p className="text-xs text-slate-500">@{activeConv.lead_handle} &middot; {activeConv.platform}</p>
+                  <p className="text-sm font-semibold text-foreground">{activeConv.lead_name}</p>
+                  <p className="text-xs text-muted-foreground">@{activeConv.lead_handle} &middot; {activeConv.platform}</p>
                 </div>
                 <Button variant="ghost" size="icon" className="h-8 w-8"
                   data-testid="toggle-star-btn"
                   onClick={(e) => toggleStar(activeConv.id, e)}>
-                  <Star className={`w-4 h-4 ${activeConv.starred ? "text-amber-400 fill-amber-400" : "text-slate-500"}`} />
+                  <Star className={`w-4 h-4 ${activeConv.starred ? "text-amber-400 fill-amber-400" : "text-muted-foreground"}`} />
                 </Button>
               </div>
 
@@ -286,7 +286,7 @@ export default function CRMPage() {
                   {messages.map(m => (
                     <div key={m.id} className={`flex ${m.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
                       <div className={`max-w-[75%] px-4 py-2.5 ${m.sender === 'user' ? 'msg-user' : 'msg-lead'}`}>
-                        <p className="text-sm text-slate-200 leading-relaxed">{m.content}</p>
+                        <p className="text-sm text-foreground leading-relaxed">{m.content}</p>
                       </div>
                     </div>
                   ))}
@@ -310,10 +310,10 @@ export default function CRMPage() {
                   <Sparkles className="w-4 h-4" />
                 </Button>
                 <Input placeholder="Type your message..." data-testid="message-input"
-                  className="flex-1 bg-slate-950/50 border-slate-700 h-10 text-slate-200 placeholder:text-slate-600"
+                  className="flex-1 bg-slate-950/50 border-border h-10 text-foreground placeholder:text-muted-foreground"
                   value={msgInput} onChange={e => setMsgInput(e.target.value)} />
                 <Button type="submit" disabled={sending || !msgInput.trim()} data-testid="send-message-btn"
-                  className="bg-blue-600 hover:bg-blue-500 text-white h-10 px-4">
+                  className="bg-blue-600 hover:bg-blue-500 text-foreground h-10 px-4">
                   {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                 </Button>
               </form>
