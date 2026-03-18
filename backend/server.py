@@ -17,6 +17,8 @@ from routes.billing import router as billing_router, handle_stripe_webhook
 from routes.seed import router as seed_router
 from routes.profile import router as profile_router
 from routes.team import router as team_router
+from routes.autopilot import router as autopilot_router
+from routes.integrations import router as integrations_router
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -36,6 +38,8 @@ api_router.include_router(billing_router)
 api_router.include_router(seed_router)
 api_router.include_router(profile_router)
 api_router.include_router(team_router)
+api_router.include_router(autopilot_router)
+api_router.include_router(integrations_router)
 
 
 @api_router.get("/")
@@ -68,6 +72,11 @@ async def startup():
     await db.conversations.create_index([('user_id', 1), ('last_message_at', -1)])
     await db.conversations.create_index([('user_id', 1), ('assigned_to', 1)])
     await db.messages.create_index('conversation_id')
+    await db.campaigns.create_index([('user_id', 1), ('status', 1)])
+    await db.campaign_executions.create_index([('campaign_id', 1), ('executed_at', -1)])
+    await db.integrations.create_index([('user_id', 1), ('platform', 1)], unique=True)
+    await db.platform_conversations.create_index([('user_id', 1), ('platform', 1)])
+    await db.platform_messages.create_index('conversation_id')
     logger.info("GoSocial API started, indexes created")
 
 

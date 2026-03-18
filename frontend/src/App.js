@@ -18,6 +18,8 @@ import BlogPage from "@/pages/BlogPage";
 import BlogDetailPage from "@/pages/BlogDetailPage";
 import ProfilePage from "@/pages/ProfilePage";
 import TeamPage from "@/pages/TeamPage";
+import AutopilotPage from "@/pages/AutopilotPage";
+import IntegrationsPage from "@/pages/IntegrationsPage";
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -47,6 +49,8 @@ function AppRoutes() {
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/team" element={<TeamPage />} />
+        <Route path="/autopilot" element={<AutopilotPage />} />
+        <Route path="/integrations" element={<IntegrationsPage />} />
       </Route>
     </Routes>
   );

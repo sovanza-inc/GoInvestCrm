@@ -107,3 +107,43 @@ class TeamMemberUpdate(BaseModel):
 
 class LeadAssign(BaseModel):
     assigned_to: str  # user_id
+
+
+# Autopilot Campaign Models
+class CampaignStepCreate(BaseModel):
+    message: str
+    delay_hours: int = 24
+    variant: Optional[str] = "A"
+
+
+class CampaignCreate(BaseModel):
+    name: str
+    description: Optional[str] = ""
+    steps: List[CampaignStepCreate] = []
+    target_platforms: Optional[List[str]] = []
+    target_statuses: Optional[List[str]] = []
+    target_min_score: Optional[int] = None
+    target_max_score: Optional[int] = None
+    target_tags: Optional[List[str]] = []
+
+
+class CampaignUpdate(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    steps: Optional[List[CampaignStepCreate]] = None
+    target_platforms: Optional[List[str]] = None
+    target_statuses: Optional[List[str]] = None
+    target_min_score: Optional[int] = None
+    target_max_score: Optional[int] = None
+    target_tags: Optional[List[str]] = None
+
+
+# Integration Models
+class IntegrationConnect(BaseModel):
+    platform: str  # whatsapp, instagram
+    account_name: Optional[str] = None
+    account_id: Optional[str] = None
+
+
+class IntegrationMessage(BaseModel):
+    content: str
