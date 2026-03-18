@@ -11,7 +11,7 @@ from datetime import datetime
 # API base URL from environment
 BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', '').rstrip('/')
 if not BASE_URL:
-    BASE_URL = "https://social-sales-hub-9.preview.emergentagent.com"
+    BASE_URL = "https://scan-and-run.preview.emergentagent.com"
 
 # Test user credentials - unique per run
 TEST_EMAIL = f"test_user_{uuid.uuid4().hex[:8]}@gosocial.com"
