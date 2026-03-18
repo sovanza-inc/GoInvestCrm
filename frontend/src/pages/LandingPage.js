@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTheme } from "@/contexts/ThemeContext";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -8,7 +9,7 @@ import {
   Zap, ArrowRight, Check, Star, Users, Sparkles, MessageSquare,
   BarChart3, FileText, Target, Crown, Rocket, Globe, Brain,
   Send, Filter, TrendingUp, Clock, Shield, Inbox, ChevronRight,
-  LayoutDashboard, UserCheck, Bot, Mail, Workflow, PieChart
+  LayoutDashboard, UserCheck, Bot, Mail, Workflow, PieChart, Sun, Moon
 } from "lucide-react";
 
 const HERO_IMG = "https://static.prod-images.emergentagent.com/jobs/3007fe4f-ebc2-4c42-97e8-25bcb565ef33/images/819e9d66cc0feb90faa6536c8e01e5548a059e6bb8636f1a14667e09c252ffa8.png";
@@ -206,6 +207,7 @@ const plans = [
 export default function LandingPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const [activeFeature, setActiveFeature] = useState("scoring");
   const [activeSolution, setActiveSolution] = useState("scoring");
   const ActiveMockup = FEATURE_MOCKUPS[activeFeature];
@@ -217,28 +219,37 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white text-slate-900" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+    <div className="min-h-screen bg-background text-foreground" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
 
       {/* ━━━ Navbar ━━━ */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-100" data-testid="landing-navbar">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border" data-testid="landing-navbar">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center"><Zap className="w-4 h-4 text-white" /></div>
-            <span className="text-lg font-bold text-slate-900 tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>GoSocial</span>
+            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center"><Zap className="w-4 h-4 text-primary-foreground" /></div>
+            <span className="text-lg font-bold text-foreground tracking-tight" style={{ fontFamily: 'Outfit, sans-serif' }}>GoSocial</span>
           </div>
           <div className="hidden md:flex items-center gap-8">
-            <a href="#features" className="text-sm text-slate-500 hover:text-slate-900 transition-colors font-medium">Features</a>
-            <a href="#solutions" className="text-sm text-slate-500 hover:text-slate-900 transition-colors font-medium">Solutions</a>
-            <a href="#pricing" className="text-sm text-slate-500 hover:text-slate-900 transition-colors font-medium">Pricing</a>
+            <a href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors font-medium">Features</a>
+            <a href="#solutions" className="text-sm text-muted-foreground hover:text-foreground transition-colors font-medium">Solutions</a>
+            <a href="#pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors font-medium">Pricing</a>
           </div>
           <div className="flex items-center gap-3">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleTheme}
+              className="text-muted-foreground hover:text-foreground h-9 w-9"
+              title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+            >
+              {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </Button>
             {user ? (
-              <Button onClick={() => navigate("/dashboard")} data-testid="nav-dashboard-btn" className="bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm h-9 px-5 rounded-full">
+              <Button onClick={() => navigate("/dashboard")} data-testid="nav-dashboard-btn" className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-sm h-9 px-5 rounded-full">
                 Dashboard <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
               </Button>
             ) : (
               <>
-                <Button variant="ghost" onClick={() => navigate("/login")} data-testid="nav-login-btn" className="text-slate-600 hover:text-slate-900 text-sm h-9 font-medium">Log in</Button>
+                <Button variant="ghost" onClick={() => navigate("/login")} data-testid="nav-login-btn" className="text-muted-foreground hover:text-foreground text-sm h-9 font-medium">Log in</Button>
                 <Button onClick={handleGetStarted} data-testid="nav-get-started-btn"
                   className="text-white font-bold text-sm h-10 px-6 rounded-full shadow-lg"
                   style={{ background: "linear-gradient(135deg, #7c3aed, #3b82f6)" }}>

@@ -1,6 +1,7 @@
 import "@/App.css";
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 import { Toaster } from "sonner";
 import Layout from "@/components/Layout";
 import LandingPage from "@/pages/LandingPage";
@@ -63,10 +64,12 @@ function AppRouter() {
 function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <AppRouter />
-        <Toaster theme="dark" position="top-right" richColors />
-      </AuthProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <AppRouter />
+          <Toaster theme="dark" position="top-right" richColors />
+        </AuthProvider>
+      </ThemeProvider>
     </BrowserRouter>
   );
 }
